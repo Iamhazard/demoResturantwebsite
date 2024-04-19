@@ -10,11 +10,11 @@ import NavMobile from './MobileNavbar'
 const Navbar = () => {
     const user = 0;
     return (
-        <div className='bg-white sticky z-50 top-0 inset-x-0 h-16'>
+        <div className='bg-white sticky z-50 top-[14px] inset-x-0 h-16'>
             <header className='relative bg-white'>
                 <MaxWidthWrapper>
                     <div className='border-b border-gray-50'>
-                        <div className='flex h-16 items-center'>
+                        <div className='flex  items-center'>
                             {/* mobile */}
                             <div className=' px-4 flex lg:ml-0'>
                                 <Link href='/'>

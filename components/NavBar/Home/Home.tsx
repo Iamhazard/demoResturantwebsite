@@ -15,7 +15,7 @@ const Homepage = () => {
                         <br />
                         with a <span className='text-red-700 '>Pizza</span>
                     </h1>
-                    <p className='md:text-lg lg:text-xl w-[480px]'>
+                    <p className=' text-sm sm:text-md md:text-lg lg:text-xl max-w-[480px] w-full'>
                         Pizza is a missing piece that makes every day a little bit better.
                         <b /> a simple yet delicious pizza is the perfect way to start your day.
 
@@ -26,7 +26,7 @@ const Homepage = () => {
                     </div>
 
                 </div>
-                <div className='lg:block hidden grid-rows-7 col-start-8 col-end-12 row-start-1 row-end-7'>
+                <div className='lg:block md:block hidden grid-rows-7 col-start-8 col-end-12 row-start-1 row-end-7'>
                     <Image src='/Assets/pizza.png' alt='image' height={600} width={600} ></Image>
                 </div>
             </div>

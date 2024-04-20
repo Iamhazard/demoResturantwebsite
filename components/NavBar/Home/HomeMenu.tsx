@@ -51,17 +51,18 @@ const HomeMenu = () => {
                 />
 
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+            <div className="grid sm:grid-cols-3 gap-4">
                 {menuImages?.length > 0 &&
                     menuImages.map((item) => (
-                        <div key={item.id} className="flex flex-col items-center">
-                            <MenuItem
-                                basePrice={""}
-                                sizes={[]}
-                                extraIngredientPrices={[]}
-                                {...item}
-                            />
-                        </div>
+
+                        <MenuItem
+                            key={item.id}
+                            basePrice={""}
+                            sizes={[]}
+                            extraIngredientPrices={[]}
+                            {...item}
+                        />
+
                     ))}
             </div>
 

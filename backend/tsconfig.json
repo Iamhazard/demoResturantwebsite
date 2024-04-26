@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "esnext",
+    "moduleResolution": "Node16",
+    "sourceMap": true,
+    "outDir": "dist",
+    "allowJs": true,
+    "lib": ["dom", "es6"],
+    "baseUrl": "src",
+    
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"]
+}

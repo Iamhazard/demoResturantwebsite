@@ -1,5 +1,5 @@
 import express from 'express';
-import { register } from '../Controller/UserController';
+import { login, register } from '../Controller/UserController';
 
 
 // export default (router:express.Router) => {
@@ -10,6 +10,7 @@ import { register } from '../Controller/UserController';
 
 const users =(router:express.Router)=>{
     router.post('/auth/register',register)
+    router.post('/auth/login',login)
 
 }
 

@@ -1,16 +1,14 @@
 import express from 'express';
-import { login, register } from '../Controller/UserController';
+import { deleteUser, getAllUserById, getAllUsers } from '../Controller/users';
+import { isOwner, verifySession } from '../middlewares';
 
 
-// export default (router:express.Router) => {
-
-//     router.post('/auth/register',register)
-
-// };
 
 const users =(router:express.Router)=>{
-    router.post('/auth/register',register)
-    router.post('/auth/login',login)
+
+    router.get('/users',verifySession,getAllUsers);
+    router.get('/users/:id',verifySession,getAllUserById);
+    router.delete('/users/:id',deleteUser)
 
 }
 

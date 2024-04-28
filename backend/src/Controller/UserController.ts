@@ -3,13 +3,8 @@ import bcrypt, { hash } from "bcrypt";
 import { db } from "../lib/db";
 import getCurrentUserbyEmail from "../lib/getCurrentUserbyEmail";
 import SessionById, { generateSessionToken } from "../lib/SessionById";
-import { User } from "@prisma/client";
 
 
- interface AuthenticatedRequest extends Request {
-  cookies: any;
-  user?: User | null;
-}
 
 export const login = async (req: express.Request, res: express.Response) => {
  try {
@@ -23,7 +18,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     const existingUsers=await getCurrentUserbyEmail(email)
 
     if(!existingUsers){
-      return res.status(400).send("email already exist");
+      return res.status(400).send(" email doesn't exist");
     }
     
     const expectedHashedpassword=await bcrypt.compare(hashedPassword,existingUsers.hashedPassword)
@@ -48,39 +43,14 @@ export const login = async (req: express.Request, res: express.Response) => {
  }
 };
 
-//verify session
 
-export const verifySession=async(req:AuthenticatedRequest,res:express.Response)=>{
 
-  const sessionToken=req.cookies.sessionToken;
 
-  if(!sessionToken){
-    return res.status(401).send("Unauthorized")
-  }
-
-  try {
-    const session=await db.session.findUnique({
-      where:{sessionToken},
-      include:{user:true}
-    });
-
-   if (!session || session.expires < new Date()) {
-      return res.status(401).json({ error: 'Invalid or expired session' });
-    }
-
-    req.user = session.user;
-    
-  } catch (error) {
-    console.log(error)
-     res.status(500).send({ error: 'Failed to verify session' });
-  }
-
-}
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const { name, email, hashedPassword ,role ,image} = req.body;
-    console.log("first",req.body)
+    //console.log("first",req.body)
   if(!req.body){
     return res.status(400).send("empty");
   }
@@ -106,6 +76,28 @@ export const register = async (req: express.Request, res: express.Response) => {
     return  res.json({status:200,data:newUSer,msg:"User created"})
   } catch (error) {
     console.log(error);
+    return res.sendStatus(400);
+  }
+};
+
+
+export const logout = async (req: express.Request, res: express.Response) => {
+  try {
+   
+     
+     res.cookie('sessionToken','',{
+       httpOnly: true,
+      sameSite: 'strict',
+      expires: new Date(0),
+      maxAge: 24 * 60 * 60 * 1000, 
+    })
+
+     return res.status(200).json({
+    message: "Successfully logout",
+  });
+    
+  } catch (error) {
+     console.log(error);
     return res.sendStatus(400);
   }
 };

@@ -46,16 +46,16 @@ const Navbar = () => {
                             <div className='ml-auto flex items-center'>
                                 <div className='hidden lg:flex lg:items-center lg:justify-end lg:space-x-6'>
                                     {user ? (
-                                        <Button variant='link'>user</Button>
+                                        <Link href='/profile' className={buttonVariants({ variant: 'link' })}>Hello,user</Link>
                                     ) : (
-                                        <Link href='/login' className={buttonVariants({
-                                            variant: "ghost",
+                                        <Link href='/auth/login' className={buttonVariants({
+                                            variant: "link",
                                         })}>Login</Link>
                                     )}
                                     {user ? (
                                         <Button variant='destructive' size='btn'>Logout</Button>
                                     ) : (
-                                        <Link href='/register' className={buttonVariants({
+                                        <Link href='/auth/register' className={buttonVariants({
                                             variant: "ghost",
                                         })}>Register</Link>
                                     )}

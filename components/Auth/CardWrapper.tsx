@@ -12,7 +12,7 @@ const CardWrapper = ({ children,
     backButtonHref,
     showSocial, }: CardWrapperProps) => {
     return (
-        <Card className='w-[400px] max-w[600] shadow-md my-2'>
+        <Card className='w-[420px] max-w[600] shadow-md my-2 sm:mx-auto'>
             <CardHeader>
                 <Header label={headerLabel} />
             </CardHeader>

@@ -50,3 +50,9 @@ export interface MenuItemsProps{
   
    
 }
+
+export interface FileList {
+    length: number;
+    item(index: number): File | null;
+    [index: number]: File;
+}

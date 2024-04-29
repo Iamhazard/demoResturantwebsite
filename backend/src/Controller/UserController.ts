@@ -5,7 +5,7 @@ import getCurrentUserbyEmail from "../lib/getCurrentUserbyEmail";
 import SessionById, { generateSessionToken } from "../lib/SessionById";
 
 
-
+//login
 export const login = async (req: express.Request, res: express.Response) => {
  try {
 
@@ -43,9 +43,7 @@ export const login = async (req: express.Request, res: express.Response) => {
  }
 };
 
-
-
-
+//register
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
@@ -80,7 +78,7 @@ export const register = async (req: express.Request, res: express.Response) => {
   }
 };
 
-
+//logout
 export const logout = async (req: express.Request, res: express.Response) => {
   try {
    

@@ -24,6 +24,14 @@
    pointer-events: none;
  }
 
+ div.tabs>* {
+   @apply bg-gray-300 text-gray-700 rounded-s-5xl py-2 px-4;
+ }
+
+ div.tabs>*.active {
+   @apply bg-primary text-white;
+ }
+
   @layer base {
     :root {
       --background: 0 0% 100%;

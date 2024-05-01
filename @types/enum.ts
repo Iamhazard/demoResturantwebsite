@@ -56,3 +56,8 @@ export interface FileList {
     item(index: number): File | null;
     [index: number]: File;
 }
+
+export interface EditableImages{
+    link:string;
+  
+}

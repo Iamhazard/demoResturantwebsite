@@ -2,7 +2,9 @@ import { db } from "./db";
 
 const getCurrentUserbyEmail = (email:string) => {
     try {
-        const user = db.user.findUnique({where:{email}});
+        const user = db.user.findUnique({where:{email
+            
+        }});
        
         return user
     } catch (error) {

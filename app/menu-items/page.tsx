@@ -1,4 +1,5 @@
 'use client'
+import { MenuItemsProps } from '@/@types/enum'
 import CardWrapper from '@/components/Auth/CardWrapper'
 import { FormError } from '@/components/Auth/form-error'
 import { FormSuccess } from '@/components/Auth/form-success'
@@ -37,11 +38,29 @@ const MenuItemsPage = ({ menuItem, onSubmit }: any) => {
                 backButtonLabel='back'
 
             >
-                <div className='flex items-center justify-center py-6'>
-                    <Button className='w-full' variant='clicks' size='btns'><Link
+                <div className='flex items-center justify-center py-6 '>
+                    <Button variant='clicks' size='btns'><Link
                         href="/menu-items/new"
-                    >Show all menu items &rarr;</Link> </Button>
+                    >Create new Menu item &rarr;</Link> </Button>
                 </div>
+                {/* <div>
+                    <h2 className='text-sm text-gray-500 mt-8'>Edit menu Item:</h2>
+                    <div className='grid grid-cols-3 gap-20'>
+                        {menuItem?.length > 0 && menuItem.map((item: MenuItemsProps) => (
+                            <Link href='' key={item.id}>
+                                <div>
+                                    <Image src={''} alt="" className='rounded-md' width={200} height={200} />
+                                </div>
+                                <div className="text-center">
+                                    {item.name}
+                                </div>
+                            </Link>
+                        ))
+
+                        }
+
+                    </div>
+                </div> */}
             </CardWrapper>
 
         </MaxWidthWrapper>

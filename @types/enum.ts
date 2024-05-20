@@ -31,7 +31,7 @@ export interface MenuTilesProps {
 }
 
 export interface MenuItemsProps{
-
+id:number
         image: string,
         description: string,
         name: string,

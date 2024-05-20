@@ -41,113 +41,117 @@ const Menuitems = () => {
 
     }
     return (
-        <MaxWidthWrapper>
+        <MaxWidthWrapper className='pb-6'>
+            <Card className='w-[420px] max-w[600] shadow-md my-2 sm:mx-auto'>
+                <div className='p-2 '>
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 max-w-2xl mx-auto">
-                    <div
-                        className='md:grid items-start gap-4 '
-                        style={{ gridTemplateColumns: '.3fr .7fr' }}
-                    >
-                        <div>
-                            <div className='bg-gray-600 p-2 rounded-lg'>
-                                <div className='px-6'>
-                                    <Image className="rounded-lg" src="/Assets/pizza.jpg" alt='' width={200} height={250}></Image>
+
+
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 max-w-2xl mx-auto">
+                            <div
+                                className='md:grid items-start gap-4 '
+                                style={{ gridTemplateColumns: '.3fr .7fr' }}
+                            >
+                                <div>
+                                    <div className='bg-gray-600 p-2 rounded-lg'>
+                                        <div className='px-6'>
+                                            <Image className="rounded-lg" src="/Assets/pizza.jpg" alt='' width={200} height={250}></Image>
+                                        </div>
+                                        <Label>
+                                            <Input type='file' className='hidden' onChange={handlefileChange} />
+                                            <span className={buttonVariants({
+                                                className:
+                                                    'mt-3 w-full'
+                                            })} >Edit</span>
+                                        </Label>
+
+                                    </div>
                                 </div>
-                                <Label>
-                                    <Input type='file' className='hidden' onChange={handlefileChange} />
-                                    <span className={buttonVariants({
-                                        className:
-                                            'mt-3 w-full'
-                                    })} >Edit</span>
-                                </Label>
+                                <div>
+
+                                    <div className="space-y-4 mt-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="item-name"
+                                            render={({ field }) => (
+                                                <FormItem>
+
+                                                    <FormControl>
+                                                        <Input
+                                                            type="text"
+                                                            aria-disabled
+
+                                                            placeholder={"Enter Item name"}
+                                                            {...field}
+
+                                                        />
+                                                    </FormControl>
+
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}></FormField>
 
 
+                                        <FormField
+                                            control={form.control}
+                                            name="price"
+                                            render={({ field }) => (
+                                                <FormItem>
+
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            aria-disabled
+                                                            placeholder="Base Price"
+                                                            {...field}
+                                                            disabled={isPending}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}></FormField>
+                                        <FormField
+                                            control={form.control}
+                                            name="Description"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Bio</FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            placeholder="Give description"
+                                                            className="resize-none"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                    </div>
+
+
+
+                                    <FormError message={error} />
+                                    <FormSuccess message={success} />
+                                    <Button
+                                        variant="destructive"
+                                        disabled={isPending}
+                                        type="submit"
+                                        className="w-full mt-4">
+                                        Save
+                                    </Button>
+
+                                </div>
 
                             </div>
-                        </div>
-                        <div>
+                        </form>
+                    </Form>
+                </div>
 
-                            <div className="space-y-4 mt-4">
-
-                                <FormField
-                                    control={form.control}
-                                    name="item-name"
-                                    render={({ field }) => (
-                                        <FormItem>
-
-                                            <FormControl>
-                                                <Input
-                                                    type="text"
-                                                    aria-disabled
-
-                                                    placeholder={"Enter Item name"}
-                                                    {...field}
-
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}></FormField>
-
-
-                                <FormField
-                                    control={form.control}
-                                    name="price"
-                                    render={({ field }) => (
-                                        <FormItem>
-
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    aria-disabled
-                                                    placeholder="Base Price"
-                                                    {...field}
-                                                    disabled={isPending}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}></FormField>
-                                <FormField
-                                    control={form.control}
-                                    name="bio"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Bio</FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    placeholder="Give description"
-                                                    className="resize-none"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                            </div>
-
-
-
-                            <FormError message={error} />
-                            <FormSuccess message={success} />
-                            <Button
-                                variant="destructive"
-                                disabled={isPending}
-                                type="submit"
-                                className="w-full">
-                                Save
-                            </Button>
-
-                        </div>
-
-                    </div>
-                </form>
-            </Form>
+            </Card>
 
         </MaxWidthWrapper>
     )

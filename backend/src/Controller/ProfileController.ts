@@ -1,32 +1,19 @@
 
 import express from "express";
 import { db } from "../lib/db";
-import getCurrentUserbyEmail from "../lib/getCurrentUserbyEmail";
+
 
 //create profie
 export const createProfile = async (req: express.Request, res: express.Response) => {
   try {
-    const { name, address, city, country, zip, email,userId} = req.body;
+    const { name, address, city, country, zip,userId} = req.body;
 
-  if (!userId && !email) {
-      return res.status(400).json({ error: 'userId or email must be provided' });
+  if (!userId ) {
+      return res.status(400).json({ error: 'userId  must be provided' });
     }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId || undefined,
-        email: email || undefined,
-      },
-    });
-
-    if (!user) {
-      return res.status(400).send("user doesn't exist");
-    }
-
     const product = await db.profile.create({
       data: {
-        userId:user.id,
-        email:email,
+        userId:userId,
             name:name,
             address:address,
             city:city,
@@ -34,6 +21,7 @@ export const createProfile = async (req: express.Request, res: express.Response)
             zipCode:zip,
           }
     });
+    return  res.json({status:200,data:product,msg:"User created"})
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error while login");
@@ -95,6 +83,5 @@ export const deleteProfile=async(req:express.Request,res:express.Response)=>{
           return res.status(400).send("Error while deleting  users")
     }
 }
-
 
 

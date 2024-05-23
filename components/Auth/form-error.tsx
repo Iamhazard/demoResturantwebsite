@@ -2,7 +2,7 @@ import { CircleAlertIcon } from "lucide-react";
 
 
 interface FormErrorProps {
-    message?: string;
+    message?: string | null;
 }
 
 export const FormError = ({ message }: FormErrorProps) => {

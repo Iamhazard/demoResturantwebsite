@@ -3,8 +3,9 @@ import bcrypt, { hash } from "bcrypt";
 import { db } from "../lib/db";
 import getCurrentUserbyEmail from "../lib/getCurrentUserbyEmail";
 import SessionById, { generateSessionToken } from "../lib/SessionById";
-const cloudinary = require("cloudinary").v2;
-import  {fileSizeFormatter} from "../lib/fileupload"
+
+
+
 //login
 export const login = async (req: express.Request, res: express.Response) => {
  try {
@@ -47,12 +48,12 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { name, email, hashedPassword ,role} = req.body;
-    //console.log("first",req.body)
+    const { name, email, hashedPassword ,role,lastName} = req.body;
+    console.log("first",req.body)
   if(!req.body){
     return res.status(400).send("empty");
   }
-    if (!email || !hashedPassword || !name || !role) {
+    if (!email || !hashedPassword || !name) {
       return res.status(400).send("no data found");
     }
     const existingUsers = await getCurrentUserbyEmail(email);
@@ -62,32 +63,12 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
      const hashedPasswords = await bcrypt.hash(hashedPassword, 10);
 
-     //image
-     let fileData:any ;
-     if(req.file){
-      let uploadedFile:any;
-      try {
-        uploadedFile = await cloudinary.uploader.upload(req.file.path,{
-           folder: "StockApp",
-        resource_type: "image",
-        })
-        
-      } catch (error) {
-          return res.sendStatus(500).send("image could not be uploaded")
-      }
-      fileData = {
-      fileName: req.file.originalname,
-      filePath: uploadedFile.secure_url,
-      fileType: req.file.mimetype,
-      fileSize: fileSizeFormatter(req.file.size, 2),
-    };
-     }
-
+    
     const newUSer = await db.user.create({
       data: {
         name: name,
         email: email,
-        image:fileData,
+        lastName:lastName,
         hashedPassword: hashedPasswords,
         role,
       },

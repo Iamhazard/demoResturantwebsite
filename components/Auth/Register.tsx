@@ -4,19 +4,53 @@ import CardWrapper from './CardWrapper'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { FormError } from './form-error'
 import { FormSuccess } from './form-success'
-import { useForm } from 'react-hook-form'
+import { useForm } from "react-hook-form";
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { RegisterSchema } from '@/Schema'
+import { z } from 'zod'
+import { AppDispatch, RootState } from '@/Redux/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { register } from '@/Redux/Features/AuthSlice'
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Register = () => {
 
-    const [error, setError] = useState<string | undefined>("");
-    const [success, setSuccess] = useState<string | undefined>("");
+    const [error, setError] = useState<string | null>("");
+    const [success, setSuccess] = useState<string | null>("");
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
-    const form = useForm();
+    const dispatch: AppDispatch = useDispatch()
+    const form = useForm<z.infer<typeof RegisterSchema>>({
+        resolver: zodResolver(RegisterSchema),
+        defaultValues: {
+            email: "",
+            hashedPassword: "",
+            name: "",
+            lastName: "",
+            role: "USER"
+        },
+    });
+    const auth = useSelector((state: RootState) => state.auth)
 
-    const onSubmit = () => {
+    const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+        setError("");
+        setSuccess("");
+        console.log("values befor dispach", values)
+        startTransition(() => {
+            try {
+                dispatch(register(values)).then((data) => {
+                    setError(auth.error)
+                    setSuccess(auth.success); s
+                })
+
+
+
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
 
     }
     return (
@@ -89,7 +123,7 @@ const Register = () => {
 
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="hashedPassword"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
@@ -113,7 +147,9 @@ const Register = () => {
                         className="w-full"
                         variant="default">
                         Create an Account
+
                     </Button>
+
                 </form>
                 <div className="my-0 border-b border-gray-400  text-center">
                     <div className="leading-none px-2 inline-block text-sm text-gray-700 tracking-wide font-medium bg-white transform translate-y-1/2">

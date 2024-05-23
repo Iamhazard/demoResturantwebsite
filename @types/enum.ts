@@ -1,3 +1,5 @@
+import { Role } from "@prisma/client";
+
 export type SideNavItem={
     title:string,
     path:string;
@@ -60,4 +62,20 @@ export interface FileList {
 export interface EditableImages{
     link:string;
   
+}
+
+export interface Users{
+    id:string,
+     email: string;
+    name: string;
+    role: Role;
+}
+
+export interface AuthState {
+    user: Users | null;
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null;
+    isLoggedIn: boolean;
+    isAdmin: boolean;
+     success: string | null;
 }

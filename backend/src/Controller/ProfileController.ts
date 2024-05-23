@@ -1,7 +1,9 @@
 
 import express from "express";
 import { db } from "../lib/db";
-
+ import { v2 as cloudinary, UploadApiResponse, 
+ UploadApiErrorResponse } from 'cloudinary';
+import  {fileSizeFormatter} from "../lib/fileupload"
 
 //create profie
 export const createProfile = async (req: express.Request, res: express.Response) => {
@@ -11,9 +13,32 @@ export const createProfile = async (req: express.Request, res: express.Response)
   if (!userId ) {
       return res.status(400).json({ error: 'userId  must be provided' });
     }
-    const product = await db.profile.create({
+
+     //image
+     let fileData:any ;
+     if(req.file){
+      let uploadedFile:any;
+      try {
+        uploadedFile = await cloudinary.uploader.upload(req.file.path,{
+           folder: "StockApp",
+        resource_type: "image",
+        })
+        
+      } catch (error) {
+          return res.sendStatus(500).send("image could not be uploaded")
+      }
+      fileData = {
+      fileName: req.file.originalname,
+      filePath: uploadedFile.secure_url,
+      fileType: req.file.mimetype,
+      fileSize: fileSizeFormatter(req.file.size, 2),
+    };
+     }
+
+    const newProfile = await db.profile.create({
       data: {
         userId:userId,
+          image:fileData,
             name:name,
             address:address,
             city:city,
@@ -21,7 +46,7 @@ export const createProfile = async (req: express.Request, res: express.Response)
             zipCode:zip,
           }
     });
-    return  res.json({status:200,data:product,msg:"User created"})
+    return  res.json({status:200,data:newProfile,msg:"User created"})
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error while login");

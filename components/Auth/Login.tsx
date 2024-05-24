@@ -7,11 +7,15 @@ import { FormSuccess } from './form-success'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm, SubmitHandler } from "react-hook-form"
-import { z } from 'zod'
-import { RegisterSchema } from '@/Schema'
-import { Role } from '@prisma/client'
+import { date, z } from 'zod'
+import { LoginSchema, RegisterSchema } from '@/Schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@/Redux/store'
+import { login } from '@/Redux/Features/AuthSlice'
+
 
 const Login = () => {
     const params = useSearchParams();
@@ -20,21 +24,44 @@ const Login = () => {
         params?.get("error") === "OAuthAccountNotLinked"
             ? "Email already used by different providers!"
             : "";
-    const [error, setError] = useState<string | undefined>("");
-    const [success, setSuccess] = useState<string | undefined>("");
+    const [error, setError] = useState<string | null>("");
+    const [success, setSuccess] = useState<string | null>("");
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
-    const form = useForm<z.infer<typeof RegisterSchema>>({
+    const form = useForm<z.infer<typeof LoginSchema>>({
+        resolver: zodResolver(LoginSchema),
         defaultValues: {
             email: "",
-            password: "",
-            name: "",
-            lastName: "",
+            hashedPassword: "",
+
         },
     });
+    const dispach: AppDispatch = useDispatch();
+    const auth = useSelector((state: RootState) => state.auth)
+    const router = useRouter()
+
+    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+        setError("")
+        setSuccess("")
+        console.log("values from login before dispatch", values)
+        try {
+            startTransition(() => {
+                dispach(login(values)).then((res) => {
+                    setError(auth.error)
+                    setSuccess(auth.success)
+                    if (res.type === 'auth/login/fulfilled') {
+                        router.push('/')
+                    }
 
 
-    const onSubmit = () => {
+                })
+            })
+
+
+        } catch (error) {
+            console.log(error)
+
+        }
 
     }
     return (
@@ -62,7 +89,7 @@ const Login = () => {
                                 )}></FormField>
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="hashedPassword"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>

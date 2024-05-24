@@ -79,3 +79,12 @@ export interface AuthState {
     isAdmin: boolean;
      success: string | null;
 }
+
+export interface  ProfileFormValues  {
+    name: string;
+    email: string;
+    streetAddress: string;
+    postalCode: string;
+    city: string;
+    country: string;
+};

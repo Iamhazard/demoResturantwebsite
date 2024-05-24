@@ -1,5 +1,5 @@
 import { AuthState, Users } from "@/@types/enum";
-import { RegisterSchema } from "@/Schema";
+import { LoginSchema, RegisterSchema } from "@/Schema";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios"
 
@@ -19,9 +19,11 @@ const API_URL = `${BACKEND_URL}/auth`;
 
     export const login = createAsyncThunk(
     'auth/login',
-    async (credentials: { email: string; password: string }, thunkAPI) => {
+    async (credentials: { email: string; hashedPassword: string }, thunkAPI) => {
         try {
             const response = await axios.post(`${API_URL}/login`, credentials);
+            const user=response.data.user;
+            LoginSchema.parse(user)
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response.data);
@@ -36,9 +38,7 @@ export const register = createAsyncThunk(
             const response = await axios.post(`${API_URL}/register`, credentials);
             const user=response.data.user;
             RegisterSchema.parse(user)
-            if(response.data ==200 ){
-                alert("sucess")
-            }
+            
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response.data);

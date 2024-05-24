@@ -36,20 +36,19 @@ const Register = () => {
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
         setError("");
         setSuccess("");
+
         console.log("values befor dispach", values)
-        startTransition(() => {
-            try {
-                dispatch(register(values)).then((data) => {
-                    setError(auth.error)
-                    setSuccess(auth.success); s
-                })
 
+        try {
+            dispatch(register(values)).then((data) => {
+                setError(auth.error)
+                setSuccess(auth.success)
+            })
 
+        } catch (error) {
+            console.log(error)
+        }
 
-            } catch (error) {
-                console.log(error)
-            }
-        })
 
 
     }

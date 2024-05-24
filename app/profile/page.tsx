@@ -13,29 +13,71 @@ import { FormSuccess } from '@/components/Auth/form-success'
 import { Label } from '@/components/ui/label'
 import { FileList } from '@/@types/enum'
 import Usertab from '@/components/layout/Usertab'
+import { object, z } from 'zod'
+import { ProfielSchema } from '@/Schema'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type filesPros = FileList | null;
 
 const ProfilePage = () => {
     const [isAdmin, setIsAdmin] = useState(true);
-    const [error, setError] = useState<string | undefined>("");
-    const [Name, SetName] = useState<string | undefined>("");
+    const [error, setError] = useState<string | null>("");
+    const [Name, SetName] = useState<string | null>("");
     const [success, setSuccess] = useState<string | undefined>("");
-    const [showTwoFactor, setShowTwoFactor] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isPending, startTransition] = useTransition();
-    const form = useForm();
+    const form = useForm<z.infer<typeof ProfielSchema>>({
+        resolver: zodResolver(ProfielSchema),
+        defaultValues: {
+            name: "",
+            email: "aa@gmail.com",
+            StreetAddress: "",
+            postalCode: "",
+            city: "",
+            country: "",
+        }
+    })
 
     const handlefileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log(e)
         const files: filesPros = e.target.files;
-        if (!files || !files.length) {
-            alert("Please select a file!");
-        }
 
+        if (files && files.length > 0) {
+            setSelectedFile(files[0])
+
+        } else {
+            alert("Please select a file!");
+
+        }
 
     }
 
-    const onSubmit = () => {
+    const onSubmit = (values: z.infer<typeof ProfielSchema>) => {
+        setError("");
+        setSuccess("")
+        console.log("values befor formdata", values)
+        const formData = new FormData();
+        formData.append('name', values.name)
+        formData.append('email', values.email)
+        formData.append('StreetAddress', values.StreetAddress)
+        formData.append('postalCode', values.postalCode)
+        formData.append('city', values.city)
+        formData.append('country', values.country)
+        if (selectedFile) {
+            formData.append("profieImage", selectedFile)
+        }
+        // for (const [key, value] of formData.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
+
+
+        console.log("values befor dispach", formData)
+
+        startTransition(() => {
+
+
+        })
+
 
     }
 
@@ -72,140 +114,125 @@ const ProfilePage = () => {
                                 <Form {...form}>
                                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                                         <div className="space-y-4">
-                                            {showTwoFactor && (
+
+                                            <>
                                                 <FormField
                                                     control={form.control}
-                                                    name="code"
+                                                    name="name"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                            <FormLabel>Two Factor code</FormLabel>
                                                             <FormControl>
-                                                                <Input {...field} disabled={isPending} />
+                                                                <Input
+                                                                    type="text"
+                                                                    aria-disabled
+                                                                    placeholder="Enter your Name"
+                                                                    {...field}
+                                                                    disabled={isPending}
+                                                                />
                                                             </FormControl>
                                                             <FormMessage />
                                                         </FormItem>
                                                     )}></FormField>
-                                            )}
-                                            {!showTwoFactor && (
-                                                <>
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="name"
-                                                        render={({ field }) => (
-                                                            <FormItem>
+                                                <FormField
+                                                    control={form.control}
+                                                    name="email"
+                                                    render={({ field }) => (
+                                                        <FormItem>
 
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="text"
-                                                                        aria-disabled
-                                                                        placeholder="Enter your Name"
-                                                                        {...field}
-                                                                        disabled={isPending}
-                                                                    />
-                                                                </FormControl>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}></FormField>
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="email"
-                                                        render={({ field }) => (
-                                                            <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    type="email"
+                                                                    aria-disabled
 
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="email"
-                                                                        aria-disabled
+                                                                    placeholder={"email"}
+                                                                    {...field}
+                                                                    disabled={!isPending}
+                                                                />
+                                                            </FormControl>
 
-                                                                        placeholder={"email"}
-                                                                        {...field}
-                                                                        disabled={!isPending}
-                                                                    />
-                                                                </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}></FormField>
+                                                <FormField
+                                                    control={form.control}
+                                                    name="StreetAddress"
+                                                    render={({ field }) => (
+                                                        <FormItem>
 
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}></FormField>
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="name"
-                                                        render={({ field }) => (
-                                                            <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    type="text"
+                                                                    aria-disabled
+                                                                    placeholder="Street Address"
+                                                                    {...field}
+                                                                    disabled={isPending}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}></FormField>
+                                                <div className="flex flex-wrap -mx-3 mb-2">
+                                                    <div className="md:w-1/2 px-3 mb-6 md:mb-0">
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="postalCode"
+                                                            render={({ field }) => (
+                                                                <FormItem>
 
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="text"
-                                                                        aria-disabled
-                                                                        placeholder="Street Address"
-                                                                        {...field}
-                                                                        disabled={isPending}
-                                                                    />
-                                                                </FormControl>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}></FormField>
-                                                    <div className="flex flex-wrap -mx-3 mb-2">
-                                                        <div className="md:w-1/2 px-3 mb-6 md:mb-0">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="name"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-
-                                                                        <FormControl>
-                                                                            <Input
-                                                                                type="name"
-                                                                                placeholder="Postal code"
-                                                                                {...field}
-                                                                                disabled={isPending}
-                                                                            />
-                                                                        </FormControl>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}></FormField>
-                                                        </div>
-                                                        <div className="w-full md:w-1/2 px-3">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="lastName"
-                                                                render={({ field }) => (
-                                                                    <FormItem>
-
-                                                                        <FormControl>
-                                                                            <Input
-                                                                                type="name"
-                                                                                placeholder="City"
-                                                                                {...field}
-                                                                                disabled={isPending}
-                                                                            />
-                                                                        </FormControl>
-                                                                        <FormMessage />
-                                                                    </FormItem>
-                                                                )}></FormField>
-
-                                                        </div>
+                                                                    <FormControl>
+                                                                        <Input
+                                                                            type="name"
+                                                                            placeholder="Postal code"
+                                                                            {...field}
+                                                                            disabled={isPending}
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}></FormField>
                                                     </div>
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="name"
-                                                        render={({ field }) => (
-                                                            <FormItem>
+                                                    <div className="w-full md:w-1/2 px-3">
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="city"
+                                                            render={({ field }) => (
+                                                                <FormItem>
 
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="text"
-                                                                        aria-disabled
-                                                                        placeholder="country"
-                                                                        {...field}
-                                                                        disabled={isPending}
-                                                                    />
-                                                                </FormControl>
-                                                                <FormMessage />
-                                                            </FormItem>
-                                                        )}></FormField>
+                                                                    <FormControl>
+                                                                        <Input
+                                                                            type="name"
+                                                                            placeholder="City"
+                                                                            {...field}
+                                                                            disabled={isPending}
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}></FormField>
 
-                                                </>
-                                            )}
+                                                    </div>
+                                                </div>
+                                                <FormField
+                                                    control={form.control}
+                                                    name="country"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+
+                                                            <FormControl>
+                                                                <Input
+                                                                    type="text"
+                                                                    aria-disabled
+                                                                    placeholder="country"
+                                                                    {...field}
+                                                                    disabled={isPending}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}></FormField>
+
+                                            </>
+
                                         </div>
 
                                         <FormError message={error} />

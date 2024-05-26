@@ -3,7 +3,7 @@ import CardWrapper from '@/components/Auth/CardWrapper'
 import MaxWidthWrapper from '@/components/NavBar/MaxWidthWrapper'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -16,13 +16,16 @@ import Usertab from '@/components/layout/Usertab'
 import { object, z } from 'zod'
 import { ProfielSchema } from '@/Schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@/Redux/store'
+import { selectCurrentUser } from '@/Redux/Features/AuthSlice'
 
 type filesPros = FileList | null;
 
 const ProfilePage = () => {
     const [isAdmin, setIsAdmin] = useState(true);
     const [error, setError] = useState<string | null>("");
-    const [Name, SetName] = useState<string | null>("");
+    const [email, Setemail] = useState<string | null>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -30,13 +33,15 @@ const ProfilePage = () => {
         resolver: zodResolver(ProfielSchema),
         defaultValues: {
             name: "",
-            email: "aa@gmail.com",
+            email: "",
             StreetAddress: "",
             postalCode: "",
             city: "",
             country: "",
         }
     })
+
+
 
     const handlefileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log(e)
@@ -51,6 +56,19 @@ const ProfilePage = () => {
         }
 
     }
+    const auth = useSelector((state: RootState) => state.auth)
+    const dispatch: AppDispatch = useDispatch()
+    const user = useSelector(selectCurrentUser)
+    useEffect(() => {
+        if (auth.status == 'succeeded') {
+
+            auth.user
+            setIsAdmin(auth.isAdmin);
+
+
+
+        }
+    }, [auth.status, auth.user, auth.isAdmin])
 
     const onSubmit = (values: z.infer<typeof ProfielSchema>) => {
         setError("");
@@ -80,7 +98,7 @@ const ProfilePage = () => {
 
 
     }
-
+    console.log("is admin", isAdmin)
 
     return (
         <section className='py-8'>
@@ -144,7 +162,7 @@ const ProfilePage = () => {
                                                                     type="email"
                                                                     aria-disabled
 
-                                                                    placeholder={"email"}
+                                                                    placeholder={user?.email}
                                                                     {...field}
                                                                     disabled={!isPending}
                                                                 />

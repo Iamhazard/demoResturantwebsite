@@ -1,14 +1,28 @@
+'use client'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NAV_LINKS } from './NavLinks'
 import { Button, buttonVariants } from '../ui/button'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import Cart from './Cart'
 import { cn } from '@/lib/utils'
 import NavMobile from './MobileNavbar'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/Redux/store'
+import { fetchCurrentUser, logout, selectCurrentUser, selectIsLoggedIn } from '@/Redux/Features/AuthSlice'
 
 const Navbar = () => {
-    const user = 0;
+    const dispatch = useDispatch();
+    const user = useSelector(selectCurrentUser)
+
+    const handleLogout = () => {
+
+        dispatch(logout())
+    }
+
+    console.log("user form Nav", user)
+
+
     return (
         <div className='bg-white sticky z-50 top-[14px] inset-x-0 h-16'>
             <header className='relative bg-white'>
@@ -46,14 +60,14 @@ const Navbar = () => {
                             <div className='ml-auto flex items-center'>
                                 <div className='hidden lg:flex lg:items-center lg:justify-end lg:space-x-6'>
                                     {user ? (
-                                        <Link href='/profile' className={buttonVariants({ variant: 'link' })}>Hello,user</Link>
+                                        <Link href='/profile' className={buttonVariants({ variant: 'link' })}>Hello,{user?.name}</Link>
                                     ) : (
                                         <Link href='/auth/login' className={buttonVariants({
                                             variant: "link",
                                         })}>Login</Link>
                                     )}
                                     {user ? (
-                                        <Button variant='destructive' size='btn'>Logout</Button>
+                                        <Button variant='destructive' size='btn' onClick={handleLogout}>Logout</Button>
                                     ) : (
                                         <Link href='/auth/register' className={buttonVariants({
                                             variant: "ghost",

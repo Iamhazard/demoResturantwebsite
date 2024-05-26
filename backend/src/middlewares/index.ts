@@ -1,14 +1,15 @@
 
+import { User } from "@prisma/client";
 import { db } from "../lib/db";
 import express from "express";
 import {get,merge} from "lodash";
 
 
 
-//  interface AuthenticatedRequest extends Request {
-//   cookies: any;
-//   user?:User | null;
-// }
+interface AuthenticatedRequest extends express.Request {
+  cookies: { sessionToken?: string };
+  identity?: User;
+}
 
 
 export const isOwner=async(req:express.Request,res:express.Response,next:express.NextFunction)=>{
@@ -19,6 +20,7 @@ export const isOwner=async(req:express.Request,res:express.Response,next:express
     const currentId=get(req,'id')as string;
     
     console.log("currentID",currentId)
+
     if(!currentId){
        return res.status(403).json({ error: 'Invalid' });
     }
@@ -40,7 +42,7 @@ export const verifySession=async(req:express.Request,res:express.Response,next:e
 
   const sessionToken=req.cookies.sessionToken;
 
-  console.log("session token",req.cookies.sessionToken)
+  //console.log("session token",req.cookies.sessionToken)
 
   if(!sessionToken){
     return res.status(401).send("Unauthorized")

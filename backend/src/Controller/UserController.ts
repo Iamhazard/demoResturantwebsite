@@ -3,7 +3,7 @@ import bcrypt, { hash } from "bcrypt";
 import { db } from "../lib/db";
 import getCurrentUserbyEmail from "../lib/getCurrentUserbyEmail";
 import SessionById, { generateSessionToken } from "../lib/SessionById";
-
+import jwt  from "jsonwebtoken";
 
 
 //login
@@ -100,5 +100,22 @@ export const logout = async (req: express.Request, res: express.Response) => {
   } catch (error) {
      console.log(error);
     return res.sendStatus(400);
+  }
+};
+
+const loginStatus = async (req:express.Request, res:express.Response) => {
+  const sessionToken = req.cookies.sessionToken;
+  if (!sessionToken) {
+    return res.json(false);
+  }
+
+  try {
+const session=await db.session.findUnique({
+      where:{sessionToken},
+      include:{user:true}
+    });
+    return res.json(true);
+  } catch (error) {
+    return res.json(false);
   }
 };

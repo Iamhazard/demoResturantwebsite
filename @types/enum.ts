@@ -72,9 +72,10 @@ export interface Users{
 }
 
 export interface AuthState {
-    user: Users | null;
+    user: User| null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
+    sessionToken:string |null;
     isLoggedIn: boolean;
     isAdmin: boolean;
      success: string | null;

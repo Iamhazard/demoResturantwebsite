@@ -9,6 +9,7 @@ import  {fileSizeFormatter} from "../lib/fileupload"
 export const createProfile = async (req: express.Request, res: express.Response) => {
   try {
     const { name, address, city, country, zip,userId} = req.body;
+    console.log("request body from profile",req.body)
 
   if (!userId ) {
       return res.status(400).json({ error: 'userId  must be provided' });

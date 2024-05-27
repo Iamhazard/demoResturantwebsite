@@ -13,31 +13,33 @@ import { FormSuccess } from '@/components/Auth/form-success'
 import { Label } from '@/components/ui/label'
 import { FileList } from '@/@types/enum'
 import Usertab from '@/components/layout/Usertab'
-import { object, z } from 'zod'
 import { ProfielSchema } from '@/Schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/Redux/store'
 import { selectCurrentUser } from '@/Redux/Features/AuthSlice'
+import { createProfile } from '@/Redux/Features/ProfileSlice'
+import { useRouter } from 'next/navigation'
+import { z } from 'zod'
 
 type filesPros = FileList | null;
 
 const ProfilePage = () => {
     const [isAdmin, setIsAdmin] = useState(true);
     const [error, setError] = useState<string | null>("");
-    const [email, Setemail] = useState<string | null>("");
-    const [success, setSuccess] = useState<string | undefined>("");
+    const [email, Setemail] = useState<string>("");
+    const [success, setSuccess] = useState<string | null>("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isPending, startTransition] = useTransition();
     const form = useForm<z.infer<typeof ProfielSchema>>({
         resolver: zodResolver(ProfielSchema),
         defaultValues: {
             name: "",
-            email: "",
             StreetAddress: "",
             postalCode: "",
             city: "",
             country: "",
+
         }
     })
 
@@ -58,14 +60,17 @@ const ProfilePage = () => {
     }
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch: AppDispatch = useDispatch()
+    const router = useRouter()
     const user = useSelector(selectCurrentUser)
+    const userId: any = user?.id
+
+
+    //console.log("user id", userId)
     useEffect(() => {
         if (auth.status == 'succeeded') {
 
             auth.user
             setIsAdmin(auth.isAdmin);
-
-
 
         }
     }, [auth.status, auth.user, auth.isAdmin])
@@ -73,32 +78,44 @@ const ProfilePage = () => {
     const onSubmit = (values: z.infer<typeof ProfielSchema>) => {
         setError("");
         setSuccess("")
-        console.log("values befor formdata", values)
+        //console.log("values befor formdata", values)
+
         const formData = new FormData();
-        formData.append('name', values.name)
-        formData.append('email', values.email)
-        formData.append('StreetAddress', values.StreetAddress)
+        formData.append('name', values.name),
+            formData.append('StreetAddress', values.StreetAddress)
         formData.append('postalCode', values.postalCode)
         formData.append('city', values.city)
         formData.append('country', values.country)
+        formData.append('userId', userId || "")
         if (selectedFile) {
-            formData.append("profieImage", selectedFile)
+            formData.append("image", selectedFile)
         }
-        // for (const [key, value] of formData.entries()) {
-        //     console.log(`${key}: ${value}`);
-        // }
+
+        const formDataobject: any = {};
+        for (const pair of formData.entries()) {
+            formDataobject[pair[0]] = pair[1]
+        }
 
 
-        console.log("values befor dispach", formData)
+        console.log("formdata befor dispatch", formDataobject)
 
         startTransition(() => {
+            dispatch(createProfile(formDataobject)).then((res) => {
+
+                if (res.type === 'auth/login/fulfilled') {
+                    router.push('/')
+                }
+            })
+                .catch((error: any) => {
+                    console.log("error while creating ptofile", error)
+                })
 
 
         })
 
 
     }
-    console.log("is admin", isAdmin)
+    //console.log("is admin", isAdmin)
 
     return (
         <section className='py-8'>
@@ -151,26 +168,17 @@ const ProfilePage = () => {
                                                             <FormMessage />
                                                         </FormItem>
                                                     )}></FormField>
-                                                <FormField
-                                                    control={form.control}
-                                                    name="email"
-                                                    render={({ field }) => (
-                                                        <FormItem>
 
-                                                            <FormControl>
-                                                                <Input
-                                                                    type="email"
-                                                                    aria-disabled
 
-                                                                    placeholder={user?.email}
-                                                                    {...field}
-                                                                    disabled={!isPending}
-                                                                />
-                                                            </FormControl>
+                                                <Input
+                                                    type="email"
+                                                    aria-disabled
 
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}></FormField>
+                                                    placeholder={user?.email}
+                                                    value={user?.email}
+                                                    disabled={!isPending}
+                                                />
+
                                                 <FormField
                                                     control={form.control}
                                                     name="StreetAddress"

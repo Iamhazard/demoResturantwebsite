@@ -62,7 +62,7 @@ export const register = createAsyncThunk(
 );
 
 export const fetchCurrentUser = createAsyncThunk(
-    'auth/fetchCurrentUser',
+    '/fetchCurrentUser',
     async (_, thunkAPI) => {
         try {
             const response = await axios.get(`${API_URL}/current_user`);

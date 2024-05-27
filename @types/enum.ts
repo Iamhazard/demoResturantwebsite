@@ -88,6 +88,7 @@ export interface  ProfileFormValues  {
     postalCode: string;
     city: string;
     country: string;
+    userId:string;
     image:string;
 };
 
@@ -96,6 +97,7 @@ export interface ProfileState {
         name: string;
         email: string;
         streetAddress: string;
+        userId:string;
         postalCode: string;
         city: string;
         country: string;

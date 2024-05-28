@@ -1,11 +1,22 @@
 import { ProfileFormValues, ProfileState, Users } from "@/@types/enum";
-import { LoginSchema, ProfielSchema, RegisterSchema } from "@/Schema";
-import { User } from "@prisma/client";
+import {ProfielSchema, RegisterSchema } from "@/Schema";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const initialState: ProfileState = {
-  profile: {
+const loadStateFromLocalStorage = (): ProfileState | undefined => {
+    if (typeof window === 'undefined') {
+    return undefined; 
+  }
+
+    const authStateJSON = localStorage.getItem('authState');
+    if (authStateJSON) {
+        return JSON.parse(authStateJSON);
+    }
+    return undefined;
+};
+
+const initialState: ProfileState = loadStateFromLocalStorage () || {
+  profile:null,
     name: "",
     email: "",
     userId:"",
@@ -14,11 +25,10 @@ const initialState: ProfileState = {
     city: "",
     country: "",
     image: "",
-  },
+      error: null,
+      success: null,
   status: "idle",
-  error: null,
   isAdmin: false,
-  success: null,
   isLoggedIn: false,
 };
 
@@ -27,22 +37,17 @@ const API_URL = `${BACKEND_URL}`;
 
 export const createProfile = createAsyncThunk(
   "/profile",
-  async (payload:{formDataobject: FormData }, thunkAPI) => {
+  async (payload:{ 
+     formDataobject:ProfileFormValues
+   } , thunkAPI) => {
     try {
     console.log("formdata  from profieSlice", payload)
-      const response = await fetch(`${API_URL}/profile`,
-        {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: JSON.stringify(payload),
-      });
-      
-      const data = await response.json();
-  
-      console.log("response from profileSlice", data)
-      return data;
+      const response = await axios.post(`${BACKEND_URL}/profile`,payload)
+       const profie=response.data.profie;
+       ProfielSchema.parse(profie)
+      localStorage.setItem('sessionToken', response.data.sessionToken);
+      console.log("response from profileSlice", response.data)
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -94,17 +99,17 @@ export const fetchCurrentProfileById = createAsyncThunk(
     }
   }
 );
-const authslice = createSlice({
+const profileslice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    SET_PROFILE(state, action) {
-      const profile = action.payload;
-      state.profile.email = profile.email;
-      state.profile.name = profile.name;
-      state.profile.streetAddress = profile.streetAddress;
-      state.profile.city = profile.city;
-      state.profile.country = profile.country;
+     initializeAuthState(state) {
+      if (typeof window !== 'undefined') {
+        state.isLoggedIn = !!localStorage.getItem('sessionToken');
+      }
+      },
+ SET_PROFILE(state, action) {
+      state.profile = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -114,21 +119,11 @@ const authslice = createSlice({
         state.success = null;
         state.error = null;
       })
-      .addCase(
-        createProfile.fulfilled,
-        (
-          state,
-          action: PayloadAction<{
-            user: User;
-            profile: ProfileFormValues;
-          }>
-        ) => {
-          state.status = "succeeded";
-          state.profile = action.payload.profile;
-          state.isAdmin = action.payload.user.role === "ADMIN";
-          state.success = "profile created successfully";
-        }
-      )
+       .addCase(createProfile.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.profile = action.payload;
+        state.success = 'Profile created successfully';
+      })
       .addCase(createProfile.rejected, (state, action: PayloadAction<any>) => {
         state.status = "failed";
         state.error = action.payload;
@@ -142,7 +137,9 @@ const authslice = createSlice({
         editProfiel.fulfilled,
         (
           state,
-          action: PayloadAction<{ user: Users; profile: ProfileFormValues }>
+          action: PayloadAction<{
+            profile: any; user: Users 
+}>
         ) => {
           state.status = "succeeded";
           state.profile = action.payload.profile;
@@ -164,7 +161,9 @@ const authslice = createSlice({
         fetchCurrentProfile.fulfilled,
         (
           state,
-          action: PayloadAction<{ user: Users; profile: ProfileFormValues }>
+          action: PayloadAction<{
+            profile: any; user: Users 
+}>
         ) => {
           state.status = "succeeded";
           state.profile = action.payload.profile;
@@ -182,5 +181,5 @@ const authslice = createSlice({
   },
 });
 
-export const { SET_PROFILE } = authslice.actions;
-export default authslice.reducer;
+export const { SET_PROFILE } = profileslice.actions;
+export default profileslice.reducer;

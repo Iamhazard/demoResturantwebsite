@@ -1,4 +1,4 @@
-import { Role, User } from "@prisma/client";
+import { Role, User} from "@prisma/client";
 
 export type SideNavItem={
     title:string,
@@ -93,7 +93,7 @@ export interface  ProfileFormValues  {
 };
 
 export interface ProfileState {
-    profile: {
+    profile:ProfileFormValues |null ,
         name: string;
         email: string;
         streetAddress: string;
@@ -102,10 +102,9 @@ export interface ProfileState {
         city: string;
         country: string;
         image:string;
-    };
+         error: string | null;
+        success: string | null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
     isAdmin: boolean;
-     success: string | null;
       isLoggedIn: boolean;
 }

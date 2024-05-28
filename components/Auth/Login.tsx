@@ -9,12 +9,12 @@ import { Button } from '../ui/button'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm, SubmitHandler } from "react-hook-form"
-import { date, z } from 'zod'
-import { LoginSchema, RegisterSchema } from '@/Schema'
+import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/Redux/store'
 import { login } from '@/Redux/Features/AuthSlice'
+import { LoginSchema } from '@/Schema'
 
 
 const Login = () => {

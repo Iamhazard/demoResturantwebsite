@@ -11,7 +11,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { FormError } from '@/components/Auth/form-error'
 import { FormSuccess } from '@/components/Auth/form-success'
 import { Label } from '@/components/ui/label'
-import { FileList } from '@/@types/enum'
+import { FileList, ProfileFormValues } from '@/@types/enum'
 import Usertab from '@/components/layout/Usertab'
 import { ProfielSchema } from '@/Schema'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -58,6 +58,7 @@ const ProfilePage = () => {
         }
 
     }
+    const profile = useSelector((state: RootState) => state.profile);
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch: AppDispatch = useDispatch()
     const router = useRouter()
@@ -69,47 +70,43 @@ const ProfilePage = () => {
     useEffect(() => {
         if (auth.status == 'succeeded') {
 
-            auth.user
+
             setIsAdmin(auth.isAdmin);
 
         }
-    }, [auth.status, auth.user, auth.isAdmin])
+    }, [auth.status, auth.isAdmin])
 
-    const onSubmit = (values: z.infer<typeof ProfielSchema>) => {
+    const onSubmit = async (values: z.infer<typeof ProfielSchema>) => {
         setError("");
         setSuccess("")
         //console.log("values befor formdata", values)
 
         const formData = new FormData();
+        formData.append('userId', userId)
+        if (selectedFile) {
+            formData.append("image", selectedFile)
+        }
+        console.log("image", selectedFile)
         formData.append('name', values.name),
             formData.append('StreetAddress', values.StreetAddress)
         formData.append('postalCode', values.postalCode)
         formData.append('city', values.city)
         formData.append('country', values.country)
-        formData.append('userId', userId || "")
-        if (selectedFile) {
-            formData.append("image", selectedFile)
-        }
 
-        const formDataobject: any = {};
+        const formDataObject: any = {};
         for (const pair of formData.entries()) {
-            formDataobject[pair[0]] = pair[1]
+            formDataObject[pair[0]] = pair[1];
         }
-
-
-        console.log("formdata befor dispatch", formDataobject)
-
         startTransition(() => {
-            dispatch(createProfile(formDataobject)).then((res) => {
 
-                if (res.type === 'auth/login/fulfilled') {
-                    router.push('/')
-                }
+            dispatch(createProfile(formDataObject)).then((res) => {
+                setError(profile.error)
+                setSuccess(profile.success)
+
             })
                 .catch((error: any) => {
                     console.log("error while creating ptofile", error)
                 })
-
 
         })
 

@@ -1,9 +1,13 @@
+'use client'
+import { RootState } from "@/Redux/store";
 import SectionHeaders from "@/components/NavBar/Home/Header";
 import Homepage from "@/components/NavBar/Home/Home";
 import HomeMenu from "@/components/NavBar/Home/HomeMenu";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+  const auth = useSelector((state: RootState) => state.auth)
   return (
     <>
       <Homepage />

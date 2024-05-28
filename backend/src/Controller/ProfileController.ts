@@ -8,12 +8,27 @@ import  {fileSizeFormatter} from "../lib/fileupload"
 //create profie
 export const createProfile = async (req: express.Request, res: express.Response) => {
   try {
-    const { name, address, city, country, zip,userId} = req.body;
-    console.log("request body from profile",req.body)
+    const { name, StreetAddress, city, country, postalCode,userId} = req.body;
+    //console.log(req,"create profile")
+    console.log("request body from profile backend",req.body)
+if(!req.body){
+    return res.status(400).send("empty");
 
-  if (!userId ) {
-      return res.status(400).json({ error: 'userId  must be provided' });
+  }
+  
+  // if (!=userId ) {
+  //     return res.status(400).json({ error: 'userId  must be provided' });
+  //   }
+
+ // Check if user exists
+    const user = await db.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
+
 
      //image
      let fileData:any ;
@@ -24,33 +39,34 @@ export const createProfile = async (req: express.Request, res: express.Response)
            folder: "StockApp",
         resource_type: "image",
         })
-        
+         fileData = {
+      fileName: req.body.file.originalname,
+      filePath: uploadedFile.secure_url,
+      fileType: req.body.file.mimetype,
+      fileSize: fileSizeFormatter(req.file.size, 2),
+         }
       } catch (error) {
           return res.sendStatus(500).send("image could not be uploaded")
       }
-      fileData = {
-      fileName: req.file.originalname,
-      filePath: uploadedFile.secure_url,
-      fileType: req.file.mimetype,
-      fileSize: fileSizeFormatter(req.file.size, 2),
-    };
+     
+  
      }
-
+    
     const newProfile = await db.profile.create({
       data: {
         userId:userId,
           image:fileData,
             name:name,
-            address:address,
+            address:StreetAddress,
             city:city,
             country:country,
-            zipCode:zip,
+            zipCode:postalCode,
           }
     });
     return  res.json({status:200,data:newProfile,msg:"User created"})
   } catch (error) {
     console.log(error);
-    return res.status(400).send("Error while login");
+    return res.status(400).send("Error while creating profile");
   }
 };
 

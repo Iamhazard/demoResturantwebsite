@@ -48,11 +48,13 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { name, email, hashedPassword ,role,lastName} = req.body;
-    console.log("first",req.body)
+    const formDataobject=req.body
+    const { name, email, hashedPassword ,role,lastName} = formDataobject;
+    console.log("first from backend",req.body)
   if(!req.body){
     return res.status(400).send("empty");
   }
+  
     if (!email || !hashedPassword || !name) {
       return res.status(400).send("no data found");
     }

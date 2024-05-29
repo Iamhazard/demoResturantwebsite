@@ -78,12 +78,12 @@ model Profile {
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  category  String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  CategoryId String
+  category   String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [CategoryId], references: [id], onDelete: Cascade)
+  updatedAt  DateTime @updatedAt
 }
 
 model MenuItems {

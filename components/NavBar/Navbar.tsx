@@ -8,8 +8,8 @@ import Cart from './Cart'
 import { cn } from '@/lib/utils'
 import NavMobile from './MobileNavbar'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/Redux/store'
-import { fetchCurrentUser, logout, selectCurrentUser, selectIsLoggedIn } from '@/Redux/Features/AuthSlice'
+
+import { logout, selectCurrentUser, selectIsLoggedIn } from '@/Redux/Features/AuthSlice'
 
 const Navbar = () => {
     const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const Navbar = () => {
         dispatch(logout())
     }
 
-    console.log("user form Nav", user)
+    //console.log("user form Nav", user)
 
 
     return (

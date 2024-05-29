@@ -91,14 +91,8 @@ const authslice = createSlice({
             saveStateToLocalStorage(state)
 
         },
-        set_user(state, action) {
-            state.user = action.payload.user;
-            state.success = 'Completed'
-            state.sessionToken = action.payload.sessionToken;
-            state.isLoggedIn = true
-            saveStateToLocalStorage(state);
-
-        },
+       
+        
         is_admin(state, action) {
             state.isAdmin = action.payload;
             saveStateToLocalStorage(state);

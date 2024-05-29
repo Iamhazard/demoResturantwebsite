@@ -108,3 +108,20 @@ export interface ProfileState {
     isAdmin: boolean;
       isLoggedIn: boolean;
 }
+
+export interface CategoryProps {
+  id: string;
+  category: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+export interface CategoryState {
+    category: CategoryProps | null;
+    userId:string;
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null;
+     success: string | null;
+}

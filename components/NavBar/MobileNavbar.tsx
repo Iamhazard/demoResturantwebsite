@@ -4,7 +4,6 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Icon } from "@iconify/react";
 import { motion, useCycle } from "framer-motion";
 import { SideNavItem } from "@/@types/enum";
 import { cn } from "@/lib/utils";

@@ -22,3 +22,9 @@ export const ProfielSchema = z.object({
   city: z.string().min(1, { message: "city  is required" }).regex(/^[^0-9]*$/, "city name cannot contain numbers"),
   country: z.string().min(1, { message: "country  is required" }).regex(/^[^0-9]*$/), 
 });
+
+export const CategorySchema = z.object({
+    category: z.string().min(1, { message: "Category Name  is required" }).regex(/^[^0-9]*$/, "Name cannot contain numbers"),
+  
+
+});

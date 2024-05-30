@@ -1,9 +1,7 @@
 
 import express from "express";
 import { db } from "../lib/db";
-import { PrismaClient } from "@prisma/client";
- 
-const prisma=new PrismaClient()
+
 
 //create category
 export const createCategory= async (req: express.Request, res: express.Response) => {
@@ -17,6 +15,7 @@ console.log(req.body,"id from categorycontroler")
 
     const user=await db.user.findUnique({where:{
       id:userId,
+      
 
     }
     
@@ -29,7 +28,7 @@ console.log(req.body,"id from categorycontroler")
   
     const newCategory = await db.category.create({
       data: {
-        CategoryId:userId,
+        userId:userId,
   category:category,
             
           }
@@ -45,8 +44,7 @@ console.log(req.body,"id from categorycontroler")
 export const getCategories=async(req:express.Request,res:express.Response)=>{
  
     try {
- 
-       const categories=await prisma.category.findMany()
+       const categories=await db.category.findMany()
        console.log('Fetched categories:', categories);
           
        res.json(categories).send("success");

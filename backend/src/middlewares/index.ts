@@ -3,13 +3,14 @@ import { User } from "@prisma/client";
 import { db } from "../lib/db";
 import express from "express";
 import {get,merge} from "lodash";
-
+import { Request, Response, NextFunction } from 'express'
 
 
 interface AuthenticatedRequest extends express.Request {
   cookies: { sessionToken?: string };
   identity?: User;
 }
+
 
 
 export const isOwner=async(req:express.Request,res:express.Response,next:express.NextFunction)=>{
@@ -38,33 +39,39 @@ export const isOwner=async(req:express.Request,res:express.Response,next:express
 
 
 
-export const verifySession=async(req:express.Request,res:express.Response,next:express.NextFunction)=>{
 
-  const sessionToken=req.cookies.sessionToken;
 
-  //console.log("session token",req.cookies.sessionToken)
 
-  if(!sessionToken){
-    return res.status(401).send("Unauthorized")
-  }
-
+export const verifySession = async (req: Request, res: Response, next: NextFunction) => {
+ console.log("Headers:", req.headers);
+    console.log("Cookies:", req.cookies);
   try {
-    const session=await db.session.findUnique({
-      where:{sessionToken},
-      include:{user:true}
+    const authorizationHeader = req.headers.authorization;
+    const sessionToken = authorizationHeader?.split(' ')[1] || req.cookies.sessionToken;
+
+    console.log("Extracted session token:", sessionToken);
+    if (!sessionToken) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    // Find the session in the database
+    const session = await db.session.findUnique({
+      where: { sessionToken: sessionToken },
+      include: { user: true }
     });
 
-   if (!session || session.expires < new Date()) {
+    if (!session || session.expires < new Date()) {
       return res.status(401).json({ error: 'Invalid or expired session' });
     }
-   merge(req,{identity:session.user})
-   return next();
-    // req.user = session.user;
-    
-  } catch (error) {
-    console.log(error)
-     res.status(500).send({ error: 'Failed to verify session' });
-  }
 
-}
+    // Merge user identity into the request object
+    merge(req, { identity: session.user });
+
+    // Proceed to the next middleware or route handler
+    return next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: 'Failed to verify session' });
+  }
+};
 

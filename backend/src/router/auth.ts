@@ -12,7 +12,7 @@ import { isOwner, verifySession } from "../middlewares/index";
 const auth = (router: express.Router) => {
   router.post("/auth/register", register);
   router.post("/auth/login", login);
-  router.get("/auth/logout", verifySession, logout);
+  router.get("/auth/logout", logout);
   router.get("/users", getAllUsers);
   router.get("/current_user", verifySession, isOwner);
   router.get("/", getAllUsers);

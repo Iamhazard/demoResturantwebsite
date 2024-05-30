@@ -1,11 +1,38 @@
 import { CategoryState } from "@/@types/enum";
 import { CategorySchema } from "@/Schema";
+import { db } from "@/backend/src/lib/db";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { string } from "zod";
+import { RootState } from "../store";
+import { User } from "@prisma/client";
+
+interface SessionState {
+  sessionToken: string | null;
+}
+
+// Add an initial state for the session
+const initialSessionState: SessionState = {
+  sessionToken: null,
+};
+
+// Add a Redux action to set the session token
+export const setSessionToken = (sessionToken: string | null) => {
+  return { type: 'session/setSessionToken', payload: sessionToken };
+};
+
+// Create a thunk to fetch the session token from the server
+export const fetchSessionToken = createAsyncThunk(
+  'session/fetchSessionToken',
+  async () => {
+    // Implement your logic to fetch the session token from the server
+    const sessionToken = await db.session;
+    return sessionToken;
+  }
+);
 
 const initialState: CategoryState = {
-  category: null,
+  category: "",
   userId:"",
   status: 'idle',
   error: null,
@@ -44,11 +71,17 @@ export const editCategory = createAsyncThunk(
   }
 );
 
-export const viewCategories = createAsyncThunk(
-  '/allcategory',
+export const viewCategories = createAsyncThunk < [] ,void ,{state:RootState}>(
+  '/category/getall',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/allcategory`);
+       const state = thunkAPI.getState();
+    const sessionToken = state.auth.sessionToken;
+      const response = await axios.get(`${BACKEND_URL}/category/getall`,{
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
       const categories = response.data;
       console.log("categoreies",categories)
       return categories;
@@ -110,7 +143,7 @@ const categorySlice = createSlice({
         state.success = null;
         state.error = null;
       })
-      .addCase(viewCategories.fulfilled, (state, action) => {
+      .addCase(viewCategories.fulfilled, (state, action:PayloadAction<any>) => {
         state.status = 'succeeded';
         state.category = action.payload;
         state.success = "Categories fetched successfully";
@@ -137,3 +170,5 @@ const categorySlice = createSlice({
 });
 
 export default categorySlice.reducer;
+
+

@@ -70,15 +70,15 @@ export interface Users{
     name: string;
     role: Role;
 }
-
 export interface AuthState {
-    user: User| null;
+    user: User | null; 
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
-    sessionToken:string |null;
+    sessionToken: string | null;
     isLoggedIn: boolean;
     isAdmin: boolean;
-     success: string | null;
+    success: string | null;
+    users: User[];
 }
 
 export interface  ProfileFormValues  {
@@ -109,17 +109,11 @@ export interface ProfileState {
       isLoggedIn: boolean;
 }
 
-export interface CategoryProps {
-  id: string;
-  category: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 
 export interface CategoryState {
-    category: CategoryProps | null;
+    category: string| null;
     userId:string;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;

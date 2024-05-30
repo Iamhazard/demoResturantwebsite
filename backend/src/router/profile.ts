@@ -6,7 +6,7 @@ import { createProfile, deleteProfile, getAllProfile, getProfile } from '../Cont
 
 const profile =(router:express.Router)=>{
 
-   router.post('/profile',createProfile)
+   router.post('/profile',verifySession,createProfile)
     router.get('/allprofile',verifySession,getAllProfile);
     router.get('/profile/:id',verifySession,getProfile);
     router.delete('/profile/:id',deleteProfile)

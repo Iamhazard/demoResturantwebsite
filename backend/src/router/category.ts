@@ -6,8 +6,8 @@ import { createCategory, deleteCategory, editCategory, getCategories } from '../
 
 const category =(router:express.Router)=>{
 
-   router.post('/category',createCategory)
-    router.get('/categories',verifySession,getCategories);
+   router.post('/category',verifySession,createCategory)
+    router.get('/category/getall',verifySession,getCategories);
     router.delete('/category/:id',verifySession,deleteCategory);
     router.patch('/editcategory/:id',verifySession,editCategory)
 

@@ -6,7 +6,7 @@ import { isOwner, verifySession } from '../middlewares';
 
 const users =(router:express.Router)=>{
 
-    router.get('/users',verifySession,getAllUsers);
+    router.get('/auth/users',verifySession,getAllUsers);
     router.get('/users/:id',verifySession,getAllUserById);
     router.delete('/users/:id',deleteUser)
 

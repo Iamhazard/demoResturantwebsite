@@ -20,11 +20,12 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+
+
+app.use('/',router());
+
 const server =http.createServer(app)
 
 server.listen(8080,()=>{
  console.log("server running on http://localhost:8080")
 })
-
-
-app.use('/',router());

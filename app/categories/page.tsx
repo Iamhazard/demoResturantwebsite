@@ -58,9 +58,14 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
         if (profile.status === 'succeeded') {
             setEditCategories(null);
             form.reset();
+            setSuccess(profile.success)
+            setError(profile.error)
+        } else if (profile.status === 'failed') {
+            setError(profile.error);
+            setSuccess(null);
         }
 
-    }, [form, profile.status]);
+    }, [form, profile.error, profile.status, profile.success]);
     const onSubmit = (values: z.infer<typeof CategorySchema>) => {
         console.log(" from category", values)
 

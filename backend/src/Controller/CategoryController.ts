@@ -45,9 +45,10 @@ export const getCategories=async(req:express.Request,res:express.Response)=>{
  
     try {
        const categories=await db.category.findMany()
-       console.log('Fetched categories:', categories);
+       //console.log('Fetched categories:', categories);
           
-       res.json(categories).send("success");
+    return  res.json({status:200,data:categories,msg:"Success"})
+       
     } catch (error) {
         console.log(error)
           return res.status(400).send("Error while receving all category")
@@ -59,14 +60,19 @@ export const getCategories=async(req:express.Request,res:express.Response)=>{
 export const deleteCategory=async(req:express.Request,res:express.Response)=>{
     try {
         const cid=req.params.id;
-        console.log("user id from delete",cid)
+
+         if (!cid) {
+            return res.status(404).json({ message: 'Category not found.' });
+        }
+
+        //console.log("user id from delete",cid)
 
         const  deletecategory=await db.category.delete({
             where:{
                 id:cid
             }
         })
-     return res.status(200).json(deletecategory)
+     return res.status(200).json({ message: 'Category deleted successfully.' });
         
     } catch (error) {
         console.log(error)
@@ -101,7 +107,7 @@ export const editCategory=async(req:express.Request,res:express.Response)=>{
           }
         })
          
-        return res.status(200).json(updateCategory)
+     return res.status(200).json({ status: 200, data: updateCategory, msg: "Category updated successfully" });
      
         
     } catch (error) {

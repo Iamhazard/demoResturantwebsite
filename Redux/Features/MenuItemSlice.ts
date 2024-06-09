@@ -3,9 +3,7 @@ import { CategorySchema } from "@/Schema";
 import { db } from "@/backend/src/lib/db";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { string } from "zod";
 import { RootState } from "../store";
-import { User } from "@prisma/client";
 
 interface SessionState {
   sessionToken: string | null;
@@ -40,7 +38,7 @@ const initialState: CategoryPageProps = {
 
 export const BACKEND_URL = "http://localhost:8080";
 
-export const createCategory = createAsyncThunk(
+export const createMenu= createAsyncThunk(
   'category/create',
   async (payload: { category: string,userId:string |undefined }, thunkAPI) => {
     try {
@@ -103,7 +101,7 @@ export const deleteCategory = createAsyncThunk(
   }
 );
 
-const categorySlice = createSlice({
+const menuItemSlice= createSlice({
   name: 'category',
   initialState,
   reducers: {},
@@ -168,6 +166,6 @@ const categorySlice = createSlice({
   }
 });
 
-export default categorySlice.reducer;
+export default menuItemSlice.reducer;
 
 

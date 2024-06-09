@@ -1,29 +1,34 @@
 'use client'
+import { CategoryState } from '@/@types/enum'
 import { createCategory, viewCategories } from '@/Redux/Features/CategorySlice'
 import { AppDispatch, RootState } from '@/Redux/store'
 import { CategorySchema } from '@/Schema'
 import { Header } from '@/components/Auth/CardHeader'
 import CardWrapper from '@/components/Auth/CardWrapper'
+import { DeleteButton } from '@/components/DeleteButton'
 import MaxWidthWrapper from '@/components/NavBar/MaxWidthWrapper'
 import Usertab from '@/components/layout/Usertab'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { profile } from 'console'
 import React, { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { z } from 'zod'
 
-interface CategoryPageProps {
-    userId: string;
+interface Categories {
+    data: CategoryState[];
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = () => {
+interface CategoriesListPros {
+    categories: Categories
+}
+const CategoryPage: React.FC<CategoriesListPros> = () => {
     const [error, setError] = useState<string | null>("");
+    const [categoryName, setCategoryName] = useState('');
     const [success, setSuccess] = useState<string | null>("");
     const [isPending, startTransition] = useTransition();
-    const [categories, setCategories] = useState<any[]>([])
+    const [categories, setCategories] = useState<Categories | null>(null)
     const [editategories, setEditCategories] = useState(null)
 
     const form = useForm<z.infer<typeof CategorySchema>>({
@@ -36,6 +41,7 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
     const profile = useSelector((state: RootState) => state.category);
     const auth = useSelector((state: RootState) => state.auth)
     const userId: any = auth?.user?.id
+
     //console.log(userId)
     useEffect(() => {
         try {
@@ -44,7 +50,7 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
                     setCategories(res.payload);
                 }
             });
-            console.log("all category", categories)
+            //console.log("all category", categories)
         } catch (error) {
             console.log(error)
 
@@ -67,7 +73,7 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
 
     }, [form, profile.error, profile.status, profile.success]);
     const onSubmit = (values: z.infer<typeof CategorySchema>) => {
-        console.log(" from category", values)
+        //console.log(" from category", values)
 
         try {
             startTransition(() => {
@@ -79,6 +85,9 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
         } catch (error) {
 
         }
+
+    }
+    const handleDeleteClick = (id: any) => {
 
     }
 
@@ -101,11 +110,11 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
                                         name="category"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{editategories ? "Update category" : "New Category"}
+                                                <label>{editategories ? "Update category" : "New Category"}
                                                     {editategories && (
-                                                        <>:{editategories}</>
+                                                        <b>:{editategories}</b>
                                                     )}
-                                                </FormLabel>
+                                                </label>
                                                 <FormControl>
                                                     <Input
                                                         type="text"
@@ -118,26 +127,47 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
                                             </FormItem>
                                         )}></FormField>
                                 </div>
-                                <Button
-                                    disabled={isPending}
-                                    type="submit"
-                                    className='py-4'
-                                    variant="default">
-                                    {editategories ? 'Update' : 'Create'}
-                                </Button>
+                                <div className='pb-2 flex gap-2'>
+                                    <Button
+                                        disabled={isPending}
+                                        type="submit"
+                                        className='py-4'
+                                        variant="default">
+                                        {editategories ? 'Update' : 'Create'}
+                                    </Button>
+                                    <Button variant='destructive' type='submit' onClick={() => { }}>Cancel</Button>
+                                </div>
+
+
                             </form>
                         </Form>
                         <div className='mt-4'>
-                            <Header label='Edit category'></Header>
-                            <Button
-                                onClick={() => setEditCategories}
-                                disabled={isPending}
-                                type="submit"
-                                className="w-full mt-4"
+                            <Header label='Existing category'></Header>
+                            {categories?.data?.length ? categories?.data.map((c: CategoryState) => (
+                                <div className='bg-gray-100 rounded-xl p-2 px-4 flex gap-1 mb-1 items-center' key={c.id}>
+                                    <div className='grow'>
+                                        {c.category}
 
-                                variant="outline">
-                                <span>category</span>
-                            </Button>
+                                    </div>
+                                    <div className="flex gap-1">
+                                        <Button type="button"
+                                            onClick={() => {
+
+                                                setCategoryName(c.category);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <DeleteButton label='Delete'
+                                            onDelete={async () => handleDeleteClick(c.id)}
+                                        >
+
+                                        </DeleteButton>
+                                    </div>
+
+                                </div>
+                            )) : <p className='px-4 '>No Categories Available</p>}
+
                         </div>
 
                     </div>

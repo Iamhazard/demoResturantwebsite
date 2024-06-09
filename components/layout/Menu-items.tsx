@@ -44,9 +44,6 @@ const Menuitems = () => {
         <MaxWidthWrapper className='pb-6'>
             <Card className='w-[420px] max-w[600] shadow-md my-2 sm:mx-auto'>
                 <div className='p-2 '>
-
-
-
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 max-w-2xl mx-auto">
                             <div
@@ -116,7 +113,7 @@ const Menuitems = () => {
                                             name="Description"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Bio</FormLabel>
+                                                    <FormLabel>Description</FormLabel>
                                                     <FormControl>
                                                         <Textarea
                                                             placeholder="Give description"

@@ -43,13 +43,12 @@ export const isOwner=async(req:express.Request,res:express.Response,next:express
 
 
 export const verifySession = async (req: Request, res: Response, next: NextFunction) => {
- console.log("Headers:", req.headers);
-    console.log("Cookies:", req.cookies);
+
   try {
     const authorizationHeader = req.headers.authorization;
     const sessionToken = authorizationHeader?.split(' ')[1] || req.cookies.sessionToken;
 
-    console.log("Extracted session token:", sessionToken);
+    //console.log("Extracted session token:", sessionToken);
     if (!sessionToken) {
       return res.status(401).send("Unauthorized");
     }

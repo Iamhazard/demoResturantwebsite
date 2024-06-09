@@ -3,37 +3,37 @@ import express from "express";
 import { db } from "../lib/db";
 
 
-//create category
+//create menu
 export const CreateMenu= async (req: express.Request, res: express.Response) => {
-    const { category,userId} = req.body;
+    const {itemName,Description,categoryId,image,basePrice,extraIngredientPrices,sizes} = req.body;
 
   try {
-  
-
-    const user=await db.user.findUnique({where:{
-      id:userId
-    }
-    
-    })
-   if (!user || user.role !== 'ADMIN') {
-      return res.status(401).json({ message: 'You are not authorized to perform this action.' });
-    }
-  
-
-    if (!category) {
-      return res.status(400).json({ message: 'Category is required.' });
-    }
-    const newCategory = await db.category.create({
+    const newMenu= await db.menuItems.create({
       data: {
-        userId:userId,
-  category:category,
-            
+        categoryId:categoryId,
+        itemName:itemName,
+        image:image,
+        Description:Description,
+        extraIngredientPrices:{
+          create: extraIngredientPrices.map((price: { name: string; price: number }) => ({
+            name: price.name,
+            price: price.price,
+          })),
+
+        },
+        basePrice:basePrice,
+        sizes:{
+           create: sizes.map((price: { name: string; price: number }) => ({
+            name: price.name,
+            price: price.price,
+          })),
+        },
           }
     });
-    return  res.json({status:200,data:newCategory,msg:"category created"})
+    return  res.json({status:200,data:newMenu,msg:"Menu created"})
   } catch (error) {
     console.log(error);
-    return res.status(400).send("Error while creating category");
+    return res.status(400).send("Error while creating Menu");
   }
 };
 

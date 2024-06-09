@@ -79,20 +79,35 @@ model Profile {
 }
 
 model Category {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   userId    String
   category  String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime    @updatedAt
+  mentItems MenuItems[]
 }
 
 model MenuItems {
-  id          String   @id @default(cuid())
-  itemName    String
-  Description String
-  image       String
-  basePrice   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String       @id @default(cuid())
+  itemName              String
+  Description           String
+  categoryId            String
+  category              Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  image                 String
+  extraIngredientPrices ExtraPrice[] @relation("MenuItemExtraIngredients")
+  sizes                 ExtraPrice[] @relation("MenuItemSizes")
+  basePrice             String
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+}
+
+model ExtraPrice {
+  id          String     @id @default(cuid())
+  name        String
+  price       Float
+  menuItemId  String?
+  menuItems   MenuItems? @relation("MenuItemSizes", fields: [menuItemId], references: [id])
+  menuItem2   MenuItems? @relation("MenuItemExtraIngredients", fields: [menuItemId2], references: [id])
+  menuItemId2 String?
 }

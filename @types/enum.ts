@@ -1,3 +1,4 @@
+import Menuitems from "@/components/layout/Menu-items";
 import { Role, User} from "@prisma/client";
 
 export type SideNavItem={
@@ -110,12 +111,35 @@ export interface ProfileState {
 }
 
 
-
+ 
 
 export interface CategoryState {
-    category: string| null;
-    userId:string;
+   id: string;
+  userId: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategoryPageProps {
+    category: CategoryState[]
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
-     success: string | null;
+    success: string | null;
+
+}
+export interface DeleteButtonPros {
+    label:string, 
+    onDelete: ()=>{}
+}
+export interface MenuitemsProps{
+  itemName:string;
+  Description:string;
+  categoryId:string;           
+  category:string;          
+  image:string;              
+  extraIngredientPrices:string;
+  sizes:string;            
+  basePrice:string;            
+
 }

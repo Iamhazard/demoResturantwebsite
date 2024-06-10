@@ -107,17 +107,17 @@ const menuItemSlice= createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createCategory.pending, (state) => {
+      .addCase(createMenu.pending, (state) => {
         state.status = 'loading';
         state.success = null;
         state.error = null;
       })
-      .addCase(createCategory.fulfilled, (state, action) => {
+      .addCase(createMenu.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.category = action.payload.category;
         state.success = "Category created successfully";
       })
-      .addCase(createCategory.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(createMenu.rejected, (state, action: PayloadAction<any>) => {
         state.status = 'failed';
         state.error = action.payload;
       })

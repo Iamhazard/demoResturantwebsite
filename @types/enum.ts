@@ -1,4 +1,4 @@
-import Menuitems from "@/components/layout/Menu-items";
+import Menuitems from "@/components/layout/MenuitemsForm";
 import { Role, User} from "@prisma/client";
 
 export type SideNavItem={

@@ -1,9 +1,7 @@
 'use client'
 import React, { useState, useTransition } from 'react'
 import MaxWidthWrapper from '../NavBar/MaxWidthWrapper'
-import Usertab from './Usertab'
-import CardWrapper from '../Auth/CardWrapper'
-import EditableImage from './Editableimgae'
+
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -15,8 +13,15 @@ import { Textarea } from '../ui/textarea'
 import { Card } from '../ui/card'
 import Image from 'next/image'
 import { FileList } from '@/@types/enum'
+import MenuItemsPros from './MenuItemsPros'
 
 type filesPros = FileList | null;
+
+type Size = {
+    name: string;
+    price: number;
+}
+type SizeKey = keyof Size;
 
 const Menuitems = () => {
     const [isAdmin, setIsAdmin] = useState(true);
@@ -25,6 +30,14 @@ const Menuitems = () => {
     const [success, setSuccess] = useState<string | undefined>("");
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
+    const [sizes, setSizes] = useState<Size[]>([])
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+
+    })
     const form = useForm();
 
     const onSubmit = () => {
@@ -40,19 +53,22 @@ const Menuitems = () => {
 
 
     }
+
+
+
     return (
         <MaxWidthWrapper className='pb-6'>
-            <Card className='w-[420px] max-w[600] shadow-md my-2 sm:mx-auto'>
+            <Card className='w-[460px] max-w[600] shadow-md my-2 sm:mx-auto'>
                 <div className='p-2 '>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 max-w-2xl mx-auto">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2  mx-auto">
                             <div
                                 className='md:grid items-start gap-4 '
                                 style={{ gridTemplateColumns: '.3fr .7fr' }}
                             >
                                 <div>
                                     <div className='bg-gray-600 p-2 rounded-lg'>
-                                        <div className='px-6'>
+                                        <div className='px-3'>
                                             <Image className="rounded-lg" src="/Assets/pizza.jpg" alt='' width={200} height={250}></Image>
                                         </div>
                                         <Label>
@@ -67,7 +83,7 @@ const Menuitems = () => {
                                 </div>
                                 <div>
 
-                                    <div className="space-y-4 mt-4">
+                                    <div className="space-y-4 mt-2">
                                         <FormField
                                             control={form.control}
                                             name="item-name"
@@ -127,7 +143,12 @@ const Menuitems = () => {
                                             )}
                                         />
 
+
+
                                     </div>
+                                    <div className='py-2'> <MenuItemsPros sizes={sizes} setSizes={setSizes} onSubmit={function (): {} {
+                                        throw new Error('Function not implemented.')
+                                    }} /></div>
 
 
 

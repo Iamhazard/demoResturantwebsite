@@ -78,15 +78,17 @@ const Navbar = () => {
                                     </div>
 
                                 </div>
-                                <div className=' py-3'>
-                                    < NavMobile />
-                                </div>
+
 
 
                             </div>
 
                         </div>
+
+
+
                     </div>
+                    < NavMobile />
                 </MaxWidthWrapper>
             </header>
 

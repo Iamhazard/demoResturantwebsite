@@ -1,36 +1,59 @@
 
 import express from "express";
 import { db } from "../lib/db";
+ import { v2 as cloudinary, UploadApiResponse, 
+ UploadApiErrorResponse } from 'cloudinary';
+import  {fileSizeFormatter} from "../lib/fileupload"
 
 
 //create menu
 export const CreateMenu= async (req: express.Request, res: express.Response) => {
-    const {itemName,Description,categoryId,image,basePrice,extraIngredientPrices,sizes} = req.body;
+    const {itemName,Description,categoryId,image,basePrice,extraIngredientPrices=[],sizes=[]} = req.body;
+
+       let fileData:any ;
+     if(req.file){
+      let uploadedFile:any;
+      try {
+        uploadedFile = await cloudinary.uploader.upload(req.file.path,{
+           folder: "StockApp",
+        resource_type: "image",
+        })
+         fileData = {
+      fileName: req.body.file.originalname,
+      filePath: uploadedFile.secure_url,
+      fileType: req.body.file.mimetype,
+      fileSize: fileSizeFormatter(req.file.size, 2),
+         }
+      } catch (error) {
+          return res.sendStatus(500).send("image could not be uploaded")
+      }
+     
+     }
 
   try {
     const newMenu= await db.menuItems.create({
       data: {
         categoryId:categoryId,
         itemName:itemName,
-        image:image,
+        image:fileData,
         Description:Description,
-        extraIngredientPrices:{
-          create: extraIngredientPrices.map((price: { name: string; price: number }) => ({
-            name: price.name,
-            price: price.price,
-          })),
-
-        },
+        extraIngredientPrices: {
+                    create: Array.isArray(extraIngredientPrices) ? extraIngredientPrices.map((price: { name: string; price: number }) => ({
+                        name: price.name,
+                        price: price.price,
+                    })) : [],
+                },
         basePrice:basePrice,
-        sizes:{
-           create: sizes.map((price: { name: string; price: number }) => ({
-            name: price.name,
-            price: price.price,
-          })),
-        },
+         sizes: {
+                    create: Array.isArray(sizes) ? sizes.map((size: { name: string; price: number }) => ({
+                        name: size.name,
+                        price: size.price,
+                    })) : [],
+                },
+        
           }
     });
-    return  res.json({status:200,data:newMenu,msg:"Menu created"})
+    return  res.json({status:200,data:newMenu}).send("Menu created")
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error while creating Menu");
@@ -38,13 +61,13 @@ export const CreateMenu= async (req: express.Request, res: express.Response) => 
 };
 
 //all category
-export const getAllcategory=async(req:express.Request,res:express.Response)=>{
+export const getallMenu=async(req:express.Request,res:express.Response)=>{
     try {
-        const allCategory=await db.category.findMany()
-        return res.status(200).json(allCategory)
+        const allMenu=await db.menuItems.findMany()
+        return res.status(200).json(allMenu)
     } catch (error) {
         console.log(error)
-          return res.status(400).send("Error while receving all category")
+          return res.status(400).send("Error while receving all Men")
     }
 }
 

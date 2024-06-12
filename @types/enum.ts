@@ -1,4 +1,4 @@
-import Menuitems from "@/components/layout/MenuitemsForm";
+import Menuitems, { Size } from "@/components/layout/MenuitemsForm";
 import { Role, User} from "@prisma/client";
 
 export type SideNavItem={
@@ -132,14 +132,16 @@ export interface DeleteButtonPros {
     label:string, 
     onDelete: ()=>{}
 }
+
 export interface MenuitemsProps{
   itemName:string;
   Description:string;
   categoryId:string;           
   category:string;          
   image:string;              
-  extraIngredientPrices:string;
-  sizes:string;            
+  extraIngredientPrices:Size[];
+  sizes:Size[];            
   basePrice:string;            
 
 }
+

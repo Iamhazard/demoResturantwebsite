@@ -37,7 +37,7 @@ export const login = async (req: express.Request, res: express.Response) => {
       maxAge: 24 * 60 * 60 * 1000, 
     })
 
-   return res.json({ user: existingUsers, sessionToken: session.sessionToken });
+   return res.json({ user: existingUsers, sessionToken: session.sessionToken }).send("Login successfull");
  } catch (error) {
   console.log(error);
     return res.status(400).send("Error while login");
@@ -76,7 +76,7 @@ export const register = async (req: express.Request, res: express.Response) => {
       },
     });
 
-    return  res.json({status:200,data:newUSer,msg:"User created"})
+    return  res.json({status:200,data:newUSer,msg:"User created"}).send("Register Sucessfull")
   } catch (error) {
     console.log(error);
    

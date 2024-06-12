@@ -55,7 +55,7 @@ export const verifySession = async (req: Request, res: Response, next: NextFunct
 
     // Find the session in the database
     const session = await db.session.findUnique({
-      where: { sessionToken: sessionToken },
+      where: { sessionToken },
       include: { user: true }
     });
 

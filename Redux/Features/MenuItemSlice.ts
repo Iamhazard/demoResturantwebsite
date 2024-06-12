@@ -1,4 +1,4 @@
-import { CategoryPageProps, CategoryState } from "@/@types/enum";
+import { CategoryPageProps, CategoryState, MenuitemsProps } from "@/@types/enum";
 import { CategorySchema } from "@/Schema";
 import { db } from "@/backend/src/lib/db";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -39,19 +39,21 @@ const initialState: CategoryPageProps = {
 export const BACKEND_URL = "http://localhost:8080";
 
 export const createMenu= createAsyncThunk(
-  'category/create',
-  async (payload: { category: string,userId:string |undefined }, thunkAPI) => {
+  'menu-items/new',
+  async (payload: { formDataObject:MenuitemsProps }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/category`, payload);
-      const category = response.data.category;  // Ensure this is correctly spelled
-      CategorySchema.parse(category);
-
+      console.log("formdata  from menUslice", payload)
+      const response = await axios.post(`${BACKEND_URL}/menu-items/new`, payload);
+      const category = response.data.category; 
+      CategorySchema.parse(category)
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
+
+
 
 export const editCategory = createAsyncThunk(
   'category/edit',
@@ -68,20 +70,21 @@ export const editCategory = createAsyncThunk(
   }
 );
 
-export const viewCategories = createAsyncThunk < [] ,void ,{state:RootState}>(
-  '/category/getall',
+
+export const viewMenuItems = createAsyncThunk < [] ,void ,{state:RootState}>(
+  '/menu-items',
   async (_, thunkAPI) => {
     try {
        const state = thunkAPI.getState();
     const sessionToken = state.auth.sessionToken;
-      const response = await axios.get(`${BACKEND_URL}/category/getall`,{
+      const response = await axios.get(`${BACKEND_URL}/menu-items/view`,{
         headers: {
           Authorization: `Bearer ${sessionToken}`,
         },
       });
-      const categories = response.data;
-      //console.log("categoreies",categories)
-      return categories;
+      const menus = response.data;
+      console.log("categoreies",menus)
+      return menus;
 
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -135,17 +138,17 @@ const menuItemSlice= createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      .addCase(viewCategories.pending, (state) => {
+      .addCase(viewMenuItems.pending, (state) => {
         state.status = 'loading';
         state.success = null;
         state.error = null;
       })
-      .addCase(viewCategories.fulfilled, (state, action:PayloadAction<any>) => {
+      .addCase(viewMenuItems.fulfilled, (state, action:PayloadAction<any>) => {
         state.status = 'succeeded';
         state.category = action.payload;
         state.success = "Categories fetched successfully";
       })
-      .addCase(viewCategories.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(viewMenuItems.rejected, (state, action: PayloadAction<any>) => {
         state.status = 'failed';
         state.error = action.payload;
       })

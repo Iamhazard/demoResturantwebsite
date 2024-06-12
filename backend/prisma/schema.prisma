@@ -94,7 +94,7 @@ model MenuItems {
   Description           String
   categoryId            String
   category              Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  image                 String
+  image                 String?
   extraIngredientPrices ExtraPrice[] @relation("MenuItemExtraIngredients")
   sizes                 ExtraPrice[] @relation("MenuItemSizes")
   basePrice             String

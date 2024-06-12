@@ -44,7 +44,8 @@ export const createCategory = createAsyncThunk(
   'category/create',
   async (payload: { category: string,userId:string |undefined }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/category`, payload);
+      const response = await axios.post(`${BACKEND_URL}/category`, payload)
+      
       const category = response.data.category;  // Ensure this is correctly spelled
       CategorySchema.parse(category);
 

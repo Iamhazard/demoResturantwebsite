@@ -5,6 +5,7 @@ import auth from './auth';
 import users from './users';
 import profile from './profile';
 import category from './category';
+import menu from './menu';
 
 const router=express.Router();
 
@@ -13,6 +14,7 @@ export default():express.Router=>{
     users(router);
     profile(router);
     category(router)
+    menu(router)
     return router
 }
 

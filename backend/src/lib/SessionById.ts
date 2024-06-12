@@ -9,6 +9,7 @@ export const generateSessionToken = () => {
 
 
 const expirationDate = calculateExpirationDate({ type: 'days', value: 2 });
+const sessionToken = generateSessionToken();
 
 const SessionById = async(userId:string,sessionToken: string) => {
   try {

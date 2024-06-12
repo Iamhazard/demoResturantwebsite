@@ -1,34 +1,50 @@
 'use client'
 import { MenuItemsProps } from '@/@types/enum'
+import { viewMenuItems } from '@/Redux/Features/MenuItemSlice'
+import { AppDispatch, RootState } from '@/Redux/store'
 import CardWrapper from '@/components/Auth/CardWrapper'
 import { FormError } from '@/components/Auth/form-error'
 import { FormSuccess } from '@/components/Auth/form-success'
 import { DeleteButton } from '@/components/DeleteButton'
 import MaxWidthWrapper from '@/components/NavBar/MaxWidthWrapper'
-import { menuItem } from '@/components/NavBar/NavLinks'
 import Usertab from '@/components/layout/Usertab'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
 
 
 
 const MenuItemsPage = () => {
     const [isPending, startTransition] = useTransition();
-    const [error, setError] = useState<string | undefined>("");
+    const [errors, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [image, setImage] = useState();
     const [categories, setCategories] = useState([])
     const [editategories, setEditCategories] = useState(null)
     const form = useForm()
-    const [menuItems, setMenuItems] = useState(2);
+    const [menuItems, setMenuItems] = useState([]);
     const [MenuItemName, setMenuItemName] = useState('');
+    const dispatch: AppDispatch = useDispatch()
 
     const handleDeleteClick = (id: any) => {
 
     }
+
+    useEffect(() => {
+        dispatch(viewMenuItems()).then((res: any) => {
+            if (res.payload) {
+                setMenuItems(res.payload);
+            }
+
+        })
+
+
+    }, [dispatch])
+
+    console.log(menuItems, "menuitems")
 
 
     return (
@@ -48,7 +64,7 @@ const MenuItemsPage = () => {
                 <div>
                     <h2 className='text-sm text-gray-500 mt-8'>Edit menu Item:</h2>
 
-                    {menuItem?.length ? menuItem?.map((c: any) => (
+                    {menuItems?.length ? menuItems?.map((c: any) => (
                         <div className='bg-gray-100 rounded-xl p-2 px-4 flex gap-1 mb-1 items-center' key={c.id}>
                             <Link className='grow' href={'/menu-items/edit/' + c.id}>
                                 <Image
@@ -61,7 +77,7 @@ const MenuItemsPage = () => {
                             </div>
 
                         </div>
-                    )) : <p className='px-4 '>No Categories Available</p>}
+                    )) : <p className='px-4 '>No Menu Items Available</p>}
                 </div>
             </CardWrapper>
 

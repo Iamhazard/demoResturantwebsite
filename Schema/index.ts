@@ -25,6 +25,19 @@ export const ProfielSchema = z.object({
 
 export const CategorySchema = z.object({
     category: z.string().min(1, { message: "Category Name  is required" }).regex(/^[^0-9]*$/, "Name cannot contain numbers"),
-  
 
 });
+
+export const extraPriceSchema = z.object({
+  name: z.string().min(1,{message:'Name is required'}).regex(/^[^0-9]*$/, "Name cannot contain numbers"),
+  price: z.number(),
+});
+
+export const MenuItemSchema=z.object({
+  itemName: z.string().min(1,{message:'Item name is required'}).regex(/^[^0-9]*$/, "Name cannot contain numbers"),
+  Description: z.string().min(10,{message:'Description is required'}).regex(/^[^0-9]*$/, "Name cannot contain numbers"),
+  categoryId: z.string().min(10,{message:'Category ID is required'}),
+  basePrice: z.string({required_error:"Base Price is required",invalid_type_error:"Price must be number"}),
+
+
+})

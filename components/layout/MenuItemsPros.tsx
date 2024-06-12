@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 
 
 import { Trash2 } from 'lucide-react'
+import { z } from 'zod'
+import { extraPriceSchema } from '@/Schema'
+import { zodResolver } from '@hookform/resolvers/zod'
 type Size = {
     name: string;
     price: number;
@@ -14,12 +17,14 @@ type Size = {
 type SizeKey = keyof Size;
 type Props = {
     sizes: Size[];
+    name: string;
+    addLabel: string;
     setSizes: React.Dispatch<React.SetStateAction<Size[]>>;
-    onSubmit: () => {};
+
 };
 
 
-const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, onSubmit }) => {
+const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, name, addLabel }) => {
 
     //const [sizes, setSizes] = useState([{ name: '', price: 0 }])
     const {
@@ -29,7 +34,14 @@ const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, onSubmit }) => {
     } = useForm({
 
     })
-    const form = useForm();
+    const form = useForm<z.infer<typeof extraPriceSchema>>({
+        resolver: zodResolver(extraPriceSchema),
+        defaultValues: {
+            name: "",
+            price: 0
+        }
+
+    });
 
     function addSizeProp() {
         setSizes((oldSizes: any) => {
@@ -58,17 +70,17 @@ const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, onSubmit }) => {
 
         <div className='bg-gray-200 p-4 rounded-md mb-4 shadow'>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2  mx-auto">
-                    <label className='block mb-2 text-sm font-medium text-gray-700'>Sizes</label>
+                <form className="mt-2  mx-auto">
+                    <label className='block mb-2 text-sm font-medium text-gray-700'>{name}</label>
                     {sizes?.length > 0 && sizes.map((size, index) => (
                         <div className='sm:col-span-2 flex gap-1 items-end' key={index}>
                             <div>
                                 <FormField
                                     control={form.control}
-                                    name={`sizes[${index}].name`}
+                                    name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className='text-[13px] text-gray-600'>Size Name</FormLabel>
+                                            <FormLabel className='text-[13px] text-gray-600'>Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='text'
@@ -92,7 +104,7 @@ const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, onSubmit }) => {
                             <div>
                                 <FormField
                                     control={form.control}
-                                    name={`sizes[${index}].price`}
+                                    name='price'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className='text-[12px] text-gray-600'>Extra Size</FormLabel>
@@ -127,7 +139,7 @@ const MenuItemsPros: React.FC<Props> = ({ sizes, setSizes, onSubmit }) => {
                         onClick={addSizeProp}
                         className='w-full p-2 mt-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition'
                     >
-                        Add Size
+                        {addLabel}
                     </Button>
                 </form>
             </Form>

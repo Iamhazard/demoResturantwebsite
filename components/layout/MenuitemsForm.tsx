@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState, useTransition } from 'react'
 import MaxWidthWrapper from '../NavBar/MaxWidthWrapper'
-
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -12,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '../ui/textarea'
 import { Card } from '../ui/card'
 import Image from 'next/image'
-import { FileList } from '@/@types/enum'
+import { FileList, MenuItemsProps } from '@/@types/enum'
 import MenuItemsPros from './MenuItemsPros'
 import { z } from 'zod'
 import { MenuItemSchema } from '@/Schema'
@@ -28,10 +27,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/Redux/store'
 import { viewCategories } from '@/Redux/Features/CategorySlice'
-import { Item } from '@radix-ui/react-select'
 import { createMenu } from '@/Redux/Features/MenuItemSlice'
 
-type filesPros = FileList | null;
 
 export type Size = {
     name: string;
@@ -47,21 +44,25 @@ type Category = {
 
 type Props = {
     categories: Category[];
+    menuitem: MenuItemsProps
 }
 
-const Menuitems: React.FC<Props> = () => {
+const Menuitems: React.FC<Props> = ({ menuitem }) => {
     const [isAdmin, setIsAdmin] = useState(true);
     const [error, setError] = useState<string | undefined>("");
     const [Name, SetName] = useState<string | undefined>("");
+    const [productImage, setProductImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>(menuitem?.image || "");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [success, setSuccess] = useState<string | undefined>("");
     const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState({ type: '', text: '' });
-    const [sizes, setSizes] = useState<Size[]>([])
+    const [sizes, setSizes] = useState<Size[]>(menuitem?.sizes || [])
     const [
         extraIngredientPrices,
         setExtraIngredientPrices,
-    ] = useState<Size[]>([])
+    ] = useState<Size[]>(menuitem?.extraIngredientPrices || [])
 
     const {
         control,
@@ -76,17 +77,16 @@ const Menuitems: React.FC<Props> = () => {
     //console.log(extraIngredientPrices, "extraIngredientPrices form pros")
     const dispatch: AppDispatch = useDispatch()
     const [data, setData] = useState([]);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const profile = useSelector((state: RootState) => state.menu);
     console.log(profile)
     const form = useForm<z.infer<typeof MenuItemSchema>>(
         {
             resolver: zodResolver(MenuItemSchema),
             defaultValues: {
-                itemName: "",
-                Description: "",
-                categoryId: '',
-                basePrice: '',
+                itemName: menuitem?.itemName,
+                Description: menuitem?.Description,
+                categoryId: menuitem?.categoryId,
+                basePrice: menuitem?.basePrice
 
             }
         }
@@ -109,19 +109,25 @@ const Menuitems: React.FC<Props> = () => {
         });
     }, [dispatch]);
 
-    const handlefileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e)
-        const files: filesPros = e.target.files;
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
 
         if (files && files.length > 0) {
-            setSelectedFile(files[0])
-
+            const selectedFile = files[0];
+            setProductImage(selectedFile);
+            setImagePreview(URL.createObjectURL(selectedFile));
+            setSelectedFile(selectedFile);
         } else {
             alert("Please select a file!");
-
         }
 
-    }
+        const fileUploadElement = document.getElementById("file-upload")!;
+        if (selectedFile) {
+            fileUploadElement.textContent = selectedFile.name;
+        } else {
+            fileUploadElement.textContent = "";
+        }
+    };
     const onSubmit = (values: any) => {
         setSuccess("")
         try {
@@ -145,7 +151,6 @@ const Menuitems: React.FC<Props> = () => {
             startTransition(() => {
                 dispatch(createMenu(formDataObject)).then((res) => {
                     if (res.payload === 200) {
-
                         setMessage({ type: 'success', text: res.payload.msg });
                         setSuccess(res.payload.msg)
                         reset()
@@ -178,10 +183,10 @@ const Menuitems: React.FC<Props> = () => {
                                 <div>
                                     <div className='bg-gray-600 p-2 rounded-lg'>
                                         <div className='px-3'>
-                                            <Image className="rounded-lg" src="/Assets/pizza.jpg" alt='' width={200} height={250}></Image>
+                                            <Image className="rounded-lg" src={imagePreview || "/Assets/pizza.jpg"} alt='' width={200} height={250}></Image>
                                         </div>
                                         <Label>
-                                            <Input type='file' className='hidden' onChange={handlefileChange} />
+                                            <Input type='file' className='hidden' id="file-upload" onChange={handleFileChange} />
                                             <span className={buttonVariants({
                                                 className:
                                                     'mt-3 w-full'

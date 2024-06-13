@@ -72,7 +72,7 @@ export const editCategory = createAsyncThunk(
 
 
 export const viewMenuItems = createAsyncThunk < [] ,void ,{state:RootState}>(
-  '/menu-items',
+  '/menu-items/view',
   async (_, thunkAPI) => {
     try {
        const state = thunkAPI.getState();
@@ -91,6 +91,32 @@ export const viewMenuItems = createAsyncThunk < [] ,void ,{state:RootState}>(
     }
   }
 );
+
+//menuitems byid
+
+export const menuItemsByid = createAsyncThunk < [] ,string ,{state:RootState}>(
+  '/menu-items/id',
+  async (id: string, thunkAPI) => {
+    try {
+       const state = thunkAPI.getState();
+        console.log(id,"slice")
+    const sessionToken = state.auth.sessionToken;
+      const response = await axios.get(`${BACKEND_URL}/menu-items/${id}`,{
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
+      const menus = response.data;
+      console.log("categoreies",menus)
+      return menus;
+
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
 
 export const deleteCategory = createAsyncThunk(
   'category/delete',

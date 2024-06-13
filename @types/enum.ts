@@ -33,16 +33,17 @@ export interface MenuTilesProps {
     
 }
 
-export interface MenuItemsProps{
-id:number
-        image: string,
-        description: string,
-        name: string,
-        basePrice: string,
-        sizes: string[],
-        extraIngredientPrices: string[], 
-           
+export type MenuItemsProps = {
+    id: string;
+    itemName: string;
+    Description: string;
+    categoryId: string;
+    basePrice: string;
+    image?: string; // Added this line
+    sizes?: Size[];
+    extraIngredientPrices?: Size[];
 }
+
 
  export interface CardWrapperProps {
    children:React.ReactNode,
@@ -56,7 +57,7 @@ id:number
 
 export interface FileList {
     length: number;
-    item(index: number): File | null;
+    item(index: string): File | null;
     [index: number]: File;
 }
 

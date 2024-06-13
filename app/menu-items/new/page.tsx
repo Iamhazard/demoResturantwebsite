@@ -7,7 +7,7 @@ import Usertab from '@/components/layout/Usertab'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React from 'react'
-import { FcLeft, FcRight } from 'react-icons/fc'
+import { FcRight } from 'react-icons/fc'
 
 const NewPage = () => {
     return (
@@ -23,7 +23,16 @@ const NewPage = () => {
                 </Link>
 
             </div>
-            <Menuitems />
+            <Menuitems categories={[]} menuitem={{
+                id: '',
+                itemName: '',
+                Description: '',
+                categoryId: '',
+                basePrice: '',
+                image: '',
+                sizes: [],
+                extraIngredientPrices: []
+            }} />
 
 
 

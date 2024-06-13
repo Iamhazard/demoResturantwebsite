@@ -5,12 +5,15 @@ import { AppDispatch, RootState } from '@/Redux/store'
 import { CategorySchema } from '@/Schema'
 import { Header } from '@/components/Auth/CardHeader'
 import CardWrapper from '@/components/Auth/CardWrapper'
+import { FormError } from '@/components/Auth/form-error'
+import { FormSuccess } from '@/components/Auth/form-success'
 import { DeleteButton } from '@/components/DeleteButton'
 import MaxWidthWrapper from '@/components/NavBar/MaxWidthWrapper'
 import Usertab from '@/components/layout/Usertab'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 import React, { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,18 +22,17 @@ import { z } from 'zod'
 export interface Categories {
     data: CategoryState[];
 }
-
 interface CategoriesListPros {
     categories: Categories
 }
+
 const CategoryPage: React.FC<CategoriesListPros> = () => {
     const [error, setError] = useState<string | null>("");
     const [categoryName, setCategoryName] = useState('');
     const [success, setSuccess] = useState<string | null>("");
     const [isPending, startTransition] = useTransition();
     const [categories, setCategories] = useState<Categories | null>(null)
-    const [editategories, setEditCategories] = useState(null)
-
+    const [editCategories, setEditCategories] = useState<CategoryState | null>(null);
     const form = useForm<z.infer<typeof CategorySchema>>({
         defaultValues: {
             category: "",
@@ -38,7 +40,8 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
         }
     })
     const dispatch = useDispatch<AppDispatch>();
-    const profile = useSelector((state: RootState) => state.category);
+    const profile = useSelector((state: RootState) => state.profile);
+    const category = useSelector((state: RootState) => state.category);
     const auth = useSelector((state: RootState) => state.auth)
     const userId: any = auth?.user?.id
 
@@ -71,15 +74,16 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
             setSuccess(null);
         }
 
-    }, [form, profile.error, profile.status, profile.success]);
+    }, [form, profile.error, profile.status, profile.success, setEditCategories]);
     const onSubmit = (values: z.infer<typeof CategorySchema>) => {
         //console.log(" from category", values)
-
+        setSuccess('')
+        setError('')
         try {
             startTransition(() => {
                 dispatch(createCategory({ userId, category: values.category }))
-                setSuccess(profile.success)
-                setError(profile.error)
+                setSuccess(category.success)
+                setError(category.error)
 
             })
         } catch (error) {
@@ -110,9 +114,9 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
                                         name="category"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <label>{editategories ? "Update category" : "New Category"}
-                                                    {editategories && (
-                                                        <b>:{editategories}</b>
+                                                <label>{editCategories ? "Update category" : "New Category"}
+                                                    {editCategories && (
+                                                        <b>:{editCategories.category}</b>
                                                     )}
                                                 </label>
                                                 <FormControl>
@@ -127,13 +131,15 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
                                             </FormItem>
                                         )}></FormField>
                                 </div>
+                                <FormError message={error} />
+                                <FormSuccess message={success} />
                                 <div className='pb-2 flex gap-2'>
                                     <Button
                                         disabled={isPending}
                                         type="submit"
                                         className='py-4'
                                         variant="default">
-                                        {editategories ? 'Update' : 'Create'}
+                                        {editCategories ? 'Update' : 'Create'}
                                     </Button>
                                     <Button variant='destructive' type='submit' onClick={() => { }}>Cancel</Button>
                                 </div>
@@ -150,14 +156,17 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
 
                                     </div>
                                     <div className="flex gap-1">
+
                                         <Button type="button"
                                             onClick={() => {
-
+                                                setEditCategories(c)
                                                 setCategoryName(c.category);
                                             }}
                                         >
                                             Edit
                                         </Button>
+
+
                                         <DeleteButton label='Delete'
                                             onDelete={async () => handleDeleteClick(c.id)}
                                         >

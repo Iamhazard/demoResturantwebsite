@@ -53,7 +53,7 @@ export const CreateMenu= async (req: express.Request, res: express.Response) => 
         
           }
     });
-    return  res.json({status:200,data:newMenu}).send("Menu created")
+    return  res.json({status:200,data:newMenu})
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error while creating Menu");
@@ -70,7 +70,33 @@ export const getallMenu=async(req:express.Request,res:express.Response)=>{
           return res.status(400).send("Error while receving all Men")
     }
 }
+// menu by menu:id
+export const menuItemsbyId=async(req:express.Request,res:express.Response)=>{
+    try {
+        const menu_id=req.params.id;
+        //console.log("menu id from delete",menu_id)
 
+        const  menu=await db.menuItems.findUnique({
+            where:{
+                id:menu_id
+            },
+            include:{
+              category:true,
+              extraIngredientPrices:true,
+              sizes:true,
+            }
+        })
+
+        if (!menu) {
+            return res.status(404).json({ message: "Menu item not found" });
+        }
+     return res.status(200).json(menu)
+        
+    } catch (error) {
+        console.log(error)
+          return res.status(400).send("Error while deleting  category")
+    }
+}
 
 //delete Category by categoey:id
 export const deleteCategory=async(req:express.Request,res:express.Response)=>{

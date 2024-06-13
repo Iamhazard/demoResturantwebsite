@@ -8,15 +8,17 @@ export const createCategory= async (req: express.Request, res: express.Response)
     const { category,userId} = req.body;
 
 
-console.log(userId,"id from categorycontroler")
-console.log(req.body,"id from categorycontroler")
+//console.log(userId,"id from categorycontroler")
+//console.log(req.body,"id from categorycontroler")
   try {
+    if(!category){
+      return res.status(400).send("No category")
+    }
   
 
     const user=await db.user.findUnique({where:{
       id:userId,
-      
-
+    
     }
     
     })

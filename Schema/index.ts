@@ -1,4 +1,5 @@
-import { Role } from "@prisma/client";
+
+import { Role } from "@/@types/enum";
 import * as z from "zod";
 
 

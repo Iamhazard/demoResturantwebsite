@@ -1,5 +1,5 @@
 import Menuitems, { Size } from "@/components/layout/MenuitemsForm";
-import {  User} from "@prisma/client";
+
 
 export type Role ={
     ADMIN:string,
@@ -78,14 +78,14 @@ export interface Users{
     role: Role;
 }
 export interface AuthState {
-    user: User | null; 
+    user: Users | null; 
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
     sessionToken: string | null;
     isLoggedIn: boolean;
     isAdmin: boolean;
     success: string | null;
-    users: User[];
+    users: Users[];
 }
 
 export interface  ProfileFormValues  {

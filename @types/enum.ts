@@ -1,11 +1,26 @@
 import Menuitems, { Size } from "@/components/layout/MenuitemsForm";
 
-
-export type Role ={
-    ADMIN:string,
-    USER:string
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
+export interface Users{
+    id:string,
+     email: string;
+    name: string;
+    role: Role;
+}
+export interface AuthState {
+    user: Users | null; 
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null;
+    sessionToken: string | null;
+    isLoggedIn: boolean;
+    isAdmin: boolean;
+    success: string | null;
+    users: Users[];
+}
 export type SideNavItem={
     title:string,
     path:string;
@@ -71,22 +86,7 @@ export interface EditableImages{
   
 }
 
-export interface Users{
-    id:string,
-     email: string;
-    name: string;
-    role: Role;
-}
-export interface AuthState {
-    user: Users | null; 
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
-    sessionToken: string | null;
-    isLoggedIn: boolean;
-    isAdmin: boolean;
-    success: string | null;
-    users: Users[];
-}
+
 
 export interface  ProfileFormValues  {
     name: string;

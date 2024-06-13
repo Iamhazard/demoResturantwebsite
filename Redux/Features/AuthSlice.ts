@@ -1,7 +1,6 @@
 'use client'
-import { AuthState } from "@/@types/enum";
+import { AuthState, Users,Role } from "@/@types/enum";
 import { LoginSchema, RegisterSchema } from "@/Schema";
-import { User } from "@prisma/client";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "../store";
@@ -34,7 +33,7 @@ export const BACKEND_URL = "http://localhost:8080";
 const API_URL = `${BACKEND_URL}/auth`;
 
 // Thunks
-export const getAlluser = createAsyncThunk<User[], void, { state: RootState }>(
+export const getAlluser = createAsyncThunk<Users[], void, { state: RootState }>(
   'auth/getAllUsers',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState();
@@ -133,7 +132,7 @@ const authslice = createSlice({
         state.success = null;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<{ sessionToken: string | null; user: User }>) => {
+      .addCase(login.fulfilled, (state, action: PayloadAction<{ sessionToken: string | null; user: Users }>) => {
         state.status = 'succeeded';
         state.user = action.payload.user;
         state.isLoggedIn = true;
@@ -151,11 +150,11 @@ const authslice = createSlice({
         state.error = null;
         state.success = null;
       })
-      .addCase(register.fulfilled, (state, action: PayloadAction<{ user: User }>) => {
+      .addCase(register.fulfilled, (state, action: PayloadAction<{ user: Users }>) => {
         state.status = 'succeeded';
         state.user = action.payload.user;
         state.isLoggedIn = true;
-        state.isAdmin = action.payload.user.role === 'ADMIN';
+        state.isAdmin = action.payload.user.role ===Role.ADMIN;
         state.success = 'Registration successful!';
       })
       .addCase(register.rejected, (state, action: PayloadAction<any>) => {
@@ -167,11 +166,11 @@ const authslice = createSlice({
         state.status = 'loading';
         state.success = null;
       })
-      .addCase(fetchCurrentUser.fulfilled, (state, action: PayloadAction<{ user: User }>) => {
+      .addCase(fetchCurrentUser.fulfilled, (state, action: PayloadAction<{ user: Users }>) => {
         state.status = 'succeeded';
         state.user = action.payload.user;
         state.isLoggedIn = true;
-        state.isAdmin = action.payload.user.role === 'ADMIN';
+         state.isAdmin = action.payload.user.role === Role.ADMIN;
         state.success = 'Data fetched';
       })
       .addCase(fetchCurrentUser.rejected, (state, action: PayloadAction<any>) => {
@@ -182,7 +181,7 @@ const authslice = createSlice({
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(getAlluser.fulfilled, (state, action: PayloadAction<User[]>) => {
+      .addCase(getAlluser.fulfilled, (state, action: PayloadAction<Users[]>) => {
         state.status = 'succeeded';
         state.users = action.payload;
       })

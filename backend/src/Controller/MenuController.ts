@@ -1,10 +1,10 @@
 
 import express from "express";
 import { db } from "../lib/db";
- import { v2 as cloudinary, UploadApiResponse, 
- UploadApiErrorResponse } from 'cloudinary';
+//  import { v2 as cloudinary, UploadApiResponse, 
+//  UploadApiErrorResponse } from 'cloudinary';
 import  {fileSizeFormatter} from "../lib/fileupload"
-
+var cloudinary = require('cloudinary').v2;
 
 //create menu
 export const CreateMenu= async (req: express.Request, res: express.Response) => {

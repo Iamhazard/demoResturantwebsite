@@ -7,43 +7,88 @@ import jwt  from "jsonwebtoken";
 
 
 //login
+// export const login = async (req: express.Request, res: express.Response) => {
+//  try {
+
+//   const {email,hashedPassword}=req.body;
+
+//    if (!email || !hashedPassword) {
+//       return res.status(400).send("Please enter data");
+//     }
+
+//     const existingUsers=await getCurrentUserbyEmail(email)
+
+//     if(!existingUsers){
+//       return res.status(400).send(" email doesn't exist");
+//     }
+    
+//     const expectedHashedpassword=await bcrypt.compare(hashedPassword,existingUsers.hashedPassword)
+
+//      if (!expectedHashedpassword) {
+//       return res.status(401).send("Invalid password");
+//     }
+
+//     const sessionToken=generateSessionToken()
+//     const session = await SessionById(existingUsers.id, sessionToken);
+    
+//     res.cookie('sessionToken',session.sessionToken,{
+//        httpOnly: true,
+//       sameSite: 'strict',
+//       maxAge: 24 * 60 * 60 * 1000, 
+//     })
+
+//    return res.json({ user: existingUsers, sessionToken: session.sessionToken }).send("Login successfull");
+//  } catch (error) {
+//   console.log(error);
+//     return res.status(400).send("Error while login");
+//  }
+// };
+
 export const login = async (req: express.Request, res: express.Response) => {
- try {
+  try {
+    const { email, hashedPassword } = req.body;
 
-  const {email,hashedPassword}=req.body;
-
-   if (!email || !hashedPassword) {
-      return res.status(400).send("Please enter data");
+    // Validate request body
+    if (!email || !hashedPassword) {
+      return res.status(400).json({ error: "Please provide email and password" });
     }
 
-    const existingUsers=await getCurrentUserbyEmail(email)
-
-    if(!existingUsers){
-      return res.status(400).send(" email doesn't exist");
-    }
-    
-    const expectedHashedpassword=await bcrypt.compare(hashedPassword,existingUsers.hashedPassword)
-
-     if (!expectedHashedpassword) {
-      return res.status(401).send("Invalid password");
+    // Check if user exists
+    const existingUser = await getCurrentUserbyEmail(email);
+    if (!existingUser) {
+      return res.status(400).json({ error: "User with this email does not exist" });
     }
 
-    const sessionToken=generateSessionToken()
-    const session = await SessionById(existingUsers.id, sessionToken);
-    
-    res.cookie('sessionToken',session.sessionToken,{
-       httpOnly: true,
+    // Compare passwords
+    const storedHashedPassword = existingUser.hashedPassword;
+    if (!storedHashedPassword) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(hashedPassword, storedHashedPassword);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Generate session token and store in database
+    const sessionToken = generateSessionToken();
+    const session = await SessionById(existingUser.id, sessionToken);
+
+    // Set session token in cookie
+    res.cookie('sessionToken', session.sessionToken, {
+      httpOnly: true,
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, 
-    })
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
 
-   return res.json({ user: existingUsers, sessionToken: session.sessionToken }).send("Login successfull");
- } catch (error) {
-  console.log(error);
-    return res.status(400).send("Error while login");
- }
+    // Respond with user and session token
+    return res.json({ user: existingUser, sessionToken: session.sessionToken, message: "Login successful" });
+
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res.status(500).json({ error: "An error occurred during login" });
+  }
 };
-
 //register
 
 export const register = async (req: express.Request, res: express.Response) => {

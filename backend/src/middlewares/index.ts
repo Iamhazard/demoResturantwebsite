@@ -18,7 +18,7 @@ export const isOwner=async(req:express.Request,res:express.Response,next:express
   try {
     const userId=req.body.id;
 
-    const currentId=get(req,'id')as string;
+    const currentId=get(req,'id')as unknown as string;
     
     console.log("currentID",currentId)
 

@@ -29,6 +29,8 @@ const ProfilePage = () => {
     const [error, setError] = useState<string | null>("");
     const [email, Setemail] = useState<string>("");
     const [success, setSuccess] = useState<string | null>("");
+    const [productImage, setProductImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isPending, startTransition] = useTransition();
     const form = useForm<z.infer<typeof ProfielSchema>>({
@@ -42,22 +44,24 @@ const ProfilePage = () => {
 
         }
     })
-
-
-
-    const handlefileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e)
-        const files: filesPros = e.target.files;
-
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
         if (files && files.length > 0) {
-            setSelectedFile(files[0])
-
+            const selectedFile = files[0];
+            setProductImage(selectedFile);
+            setImagePreview(URL.createObjectURL(selectedFile));
+            setSelectedFile(selectedFile);
         } else {
             alert("Please select a file!");
-
         }
 
-    }
+        const fileUploadElement = document.getElementById("file-upload")!;
+        if (selectedFile) {
+            fileUploadElement.textContent = selectedFile.name;
+        } else {
+            fileUploadElement.textContent = "";
+        }
+    };
     const profile = useSelector((state: RootState) => state.profile);
     const auth = useSelector((state: RootState) => state.auth)
     const dispatch: AppDispatch = useDispatch()
@@ -131,7 +135,7 @@ const ProfilePage = () => {
                                         <Image className="rounded-lg" src="/Assets/pizza.jpg" alt='' width={200} height={250}></Image>
                                     </div>
                                     <Label>
-                                        <Input type='file' className='hidden' onChange={handlefileChange} />
+                                        <Input type='file' className='hidden' onChange={handleFileChange} />
                                         <span className={buttonVariants({
                                             className:
                                                 'mt-3 w-full'

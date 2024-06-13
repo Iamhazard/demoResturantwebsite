@@ -3,36 +3,39 @@ import { CategorySchema } from "@/Schema";
 import { db } from "@/backend/src/lib/db";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { string } from "zod";
+
 import { RootState } from "../store";
-import { User } from "@prisma/client";
 
 interface SessionState {
   sessionToken: string | null;
 }
 
-// Add an initial state for the session
+interface Category{
+  id:string;
+  name:string,
+}
+
+
 const initialSessionState: SessionState = {
   sessionToken: null,
 };
 
-// Add a Redux action to set the session token
 export const setSessionToken = (sessionToken: string | null) => {
   return { type: 'session/setSessionToken', payload: sessionToken };
 };
 
-// Create a thunk to fetch the session token from the server
+
 export const fetchSessionToken = createAsyncThunk(
   'session/fetchSessionToken',
   async () => {
-    // Implement your logic to fetch the session token from the server
+  
     const sessionToken = await db.session;
     return sessionToken;
   }
 );
 
 const initialState: CategoryPageProps = {
-  category: [],
+  category: null,
   status: 'idle',
   error: null,
   success: null,
@@ -56,20 +59,32 @@ export const createCategory = createAsyncThunk(
   }
 );
 
-export const editCategory = createAsyncThunk(
-  'category/edit',
-  async (payload: { id: string, name: string }, thunkAPI) => {
+export const editCategory = createAsyncThunk<
+  Category[], // Return type
+  { userId: string; categoryName: string,category:string }, // Argument type
+  { state: RootState } // ThunkAPI configuration
+>(
+  'category/editCategory',
+  async ({ userId, categoryName }, thunkAPI) => {
     try {
-      const response = await axios.patch(`${BACKEND_URL}/editcategory/${payload.id}`, { name: payload.name });
-      const category = response.data.category;
-      CategorySchema.parse(category);
-      
-      return response.data;
+      const state = thunkAPI.getState();
+      const sessionToken = state.auth.sessionToken;
+
+      const response = await axios.patch(`${BACKEND_URL}/category/editcategory`, { userId, categoryName }, {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
+
+      const categories: Category[] = response.data;
+      return categories;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
+
 
 export const viewCategories = createAsyncThunk < [] ,void ,{state:RootState}>(
   '/category/getall',
@@ -92,17 +107,28 @@ export const viewCategories = createAsyncThunk < [] ,void ,{state:RootState}>(
   }
 );
 
-export const deleteCategory = createAsyncThunk(
-  'category/delete',
-  async (id: string, thunkAPI) => {
+export const deleteCategory  = createAsyncThunk <[] ,string  ,{state:RootState}>(
+  '/category/:id',
+  async (id:string, thunkAPI) => {
     try {
-      await axios.delete(`${BACKEND_URL}/category/${id}`);
-      return id;
+       const state = thunkAPI.getState();
+    const sessionToken = state.auth.sessionToken;
+      const response = await axios.delete(`${BACKEND_URL}/category/${id}`,{
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
+      const categories = response.data;
+      //console.log("categoreies",categories)
+      return categories;
+
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
+
+
 
 const categorySlice = createSlice({
   name: 'category',
@@ -129,9 +155,9 @@ const categorySlice = createSlice({
         state.success = null;
         state.error = null;
       })
-      .addCase(editCategory.fulfilled, (state, action) => {
+      .addCase(editCategory.fulfilled, (state, action: PayloadAction<any>) => {
         state.status = 'succeeded';
-        state.category = action.payload.category;
+        state.category = action.payload;
         state.success = "Category edited successfully";
       })
       .addCase(editCategory.rejected, (state, action: PayloadAction<any>) => {
@@ -168,6 +194,7 @@ const categorySlice = createSlice({
       });
   }
 });
+export const selectCategory = (state:RootState) => state.category;
 
 export default categorySlice.reducer;
 

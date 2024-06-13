@@ -11,11 +11,14 @@ import { MenuItemsProps } from '@/@types/enum';
 const MenuItem = (menuItem: MenuItemsProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const {
-        image, name, description, basePrice,
+        image, itemName, Description, basePrice,
         sizes, extraIngredientPrices,
     } = menuItem;
     const handleAddtoCart = () => {
         console.log("bttn is clicked")
+    }
+    if (!image) {
+        return null
     }
     return (
         <>
@@ -26,8 +29,8 @@ const MenuItem = (menuItem: MenuItemsProps) => {
                             className="overflow-y-scroll p-2"
                             style={{ maxHeight: 'calc(100vh - 100px)' }}>
                             <Image src={image} alt='name' width={300} height={200} className='mx-auto' />
-                            <h2 className='text-lg font-bold text-center mb-2'>{name}</h2>
-                            <p className='text-center text-gray-500'>{description}</p>
+                            <h2 className='text-lg font-bold text-center mb-2'>{itemName}</h2>
+                            <p className='text-center text-gray-500'>{Description}</p>
                             <div className='py-2'>
                                 <h3 className='text-center text-gray-700'>Pick your size</h3>
 
@@ -65,8 +68,8 @@ const MenuItem = (menuItem: MenuItemsProps) => {
 
             <MenuItemTiles item={{
                 image: image,
-                description: description,
-                name: name,
+                description: Description,
+                name: itemName,
                 basePrice: basePrice,
                 sizes: [],
                 extraIngredientPrices: []

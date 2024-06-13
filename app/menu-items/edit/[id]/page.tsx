@@ -23,7 +23,7 @@ const EditMenu = ({ params }: { params: IParams }) => {
     const [errors, setError] = useState<string | undefined>("");
     const dispatch: AppDispatch = useDispatch();
     //const id = searchParms.get('id');
-    console.log(params, "ids")
+    //console.log(params, "ids")
 
     useEffect(() => {
         if (params.id) {

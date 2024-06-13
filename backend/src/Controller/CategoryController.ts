@@ -22,7 +22,7 @@ export const createCategory= async (req: express.Request, res: express.Response)
     }
     
     })
-   if (user.role !== 'ADMIN') {
+   if (user?.role !== 'ADMIN') {
       return res.status(401).json({ message: 'You are not authorized to perform this action.' });
     }
   
@@ -85,27 +85,27 @@ export const deleteCategory=async(req:express.Request,res:express.Response)=>{
 export const editCategory=async(req:express.Request,res:express.Response)=>{
     try {
 
-        const {cname}=req.body;
-               const cid=req.params.id;
-        console.log("user id from edit",cid)
+        const{categoryName,userId,category}=req.body
+              
+        console.log("user id from edit",userId)
 
-        const  checkcategory=await db.category.findFirst({
-            where:{
-                id:cid
-            }
-        })
+        // const  checkcategory=await db.category.fin({
+        //     where:{
+        //         category:category
+        //     }
+        // })
 
-        if(!checkcategory){
-          return res.status(400).send("category not found")
-        }
+        // if(!checkcategory){
+        //   return res.status(400).send("category not found")
+        // }
 
         const updateCategory=await db.category.update({
           where:{
-            id:cid
+            id:userId
           },
           data:{
-            category:cname,
-            updatedAt:new Date()
+            category:categoryName,
+          
           }
         })
          

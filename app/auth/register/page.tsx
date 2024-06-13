@@ -1,11 +1,14 @@
 import Register from '@/components/Auth/Register'
 import React from 'react'
-
+import { Suspense } from 'react'
 const RegisterPage = () => {
     return (
-        <div>
-            <Register />
-        </div>
+        <Suspense fallback={<div>Loading</div>}>
+            <div>
+                <Register />
+            </div>
+        </Suspense>
+
     )
 }
 

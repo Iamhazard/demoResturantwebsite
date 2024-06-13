@@ -39,7 +39,7 @@ export type MenuItemsProps = {
     Description: string;
     categoryId: string;
     basePrice: string;
-    image?: string; // Added this line
+    image?: string; 
     sizes?: Size[];
     extraIngredientPrices?: Size[];
 }
@@ -123,7 +123,7 @@ export interface CategoryState {
 }
 
 export interface CategoryPageProps {
-    category: CategoryState[]
+    category: CategoryState| null;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
     success: string | null;

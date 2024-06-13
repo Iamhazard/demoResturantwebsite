@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { CategoryState } from '@/@types/enum'
-import { createCategory, viewCategories } from '@/Redux/Features/CategorySlice'
+import { createCategory, deleteCategory, editCategory, selectCategory, viewCategories } from '@/Redux/Features/CategorySlice'
 import { AppDispatch, RootState } from '@/Redux/store'
 import { CategorySchema } from '@/Schema'
 import { Header } from '@/components/Auth/CardHeader'
@@ -13,22 +14,28 @@ import Usertab from '@/components/layout/Usertab'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import Link from 'next/link'
 import React, { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import toast from "react-hot-toast";
 import { z } from 'zod'
+
 
 export interface Categories {
     data: CategoryState[];
 }
 interface CategoriesListPros {
     categories: Categories
+
 }
 
-const CategoryPage: React.FC<CategoriesListPros> = () => {
+interface IParams {
+    id: string;
+}
+
+const CategoryPage = ({ params }: { params: IParams }) => {
     const [error, setError] = useState<string | null>("");
-    const [categoryName, setCategoryName] = useState('');
+    const [categoryame, setCategoryName] = useState('');
     const [success, setSuccess] = useState<string | null>("");
     const [isPending, startTransition] = useTransition();
     const [categories, setCategories] = useState<Categories | null>(null)
@@ -44,9 +51,15 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
     const category = useSelector((state: RootState) => state.category);
     const auth = useSelector((state: RootState) => state.auth)
     const userId: any = auth?.user?.id
+    const cName = useSelector(selectCategory)
 
-    //console.log(userId)
+    //fetch
     useEffect(() => {
+        fetchCategories()
+
+    }, [])
+
+    function fetchCategories() {
         try {
             dispatch(viewCategories()).then((res: any) => {
                 if (res.payload) {
@@ -58,10 +71,7 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
             console.log(error)
 
         }
-    }, [categories, dispatch])
-
-
-
+    }
 
     useEffect(() => {
         if (profile.status === 'succeeded') {
@@ -80,20 +90,29 @@ const CategoryPage: React.FC<CategoriesListPros> = () => {
         setSuccess('')
         setError('')
         try {
-            startTransition(() => {
-                dispatch(createCategory({ userId, category: values.category }))
+            startTransition(async () => {
+                if (editCategories) {
+                    await dispatch(editCategory({
+                        userId, categoryName: values.category,
+                        category: categoryame
+                    }))
+                } else {
+                    await dispatch(createCategory({ userId, category: values.category }))
+                }
+
                 setSuccess(category.success)
                 setError(category.error)
 
             })
         } catch (error) {
+            console.log(error)
 
         }
-
     }
-    const handleDeleteClick = (id: any) => {
-
-    }
+    const handleDeleteClick = async (id: string) => {
+        dispatch(deleteCategory(id));
+        await dispatch(viewCategories());
+    };
 
     return (
         <MaxWidthWrapper>

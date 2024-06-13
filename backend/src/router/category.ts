@@ -9,7 +9,7 @@ const category =(router:express.Router)=>{
    router.post('/category',createCategory)
     router.get('/category/getall',verifySession,getCategories);
     router.delete('/category/:id',verifySession,deleteCategory);
-    router.patch('/editcategory/:id',verifySession,editCategory)
+    router.patch('/category/editcategory',verifySession,editCategory)
 
 
 }

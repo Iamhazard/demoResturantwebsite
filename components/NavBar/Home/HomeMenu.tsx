@@ -7,16 +7,16 @@ import MaxWidthWrapper from "../MaxWidthWrapper";
 
 const menuImages = [
     {
-        id: 1, name: 'Pizza', description: "best pizza", image: '/Assets/pizza.jpg'
+        id: "1", name: 'Pizza', description: "best pizza", image: '/Assets/pizza.jpg'
     },
     {
-        id: 1, name: 'Pizza2', description: "best pizza 2", image: '/Assets/pizza.jpg'
+        id: "1", name: 'Pizza2', description: "best pizza 2", image: '/Assets/pizza.jpg'
     },
     {
-        id: 1, name: 'Pizza3', description: "best pizza 3", image: '/Assets/pizza.jpg'
+        id: "1", name: 'Pizza3', description: "best pizza 3", image: '/Assets/pizza.jpg'
     },
     {
-        id: 1, name: 'Pizza4', description: "best pizza 4", image: '/Assets/pizza.jpg'
+        id: "1", name: 'Pizza4', description: "best pizza 4", image: '/Assets/pizza.jpg'
     }
 
 ];
@@ -56,12 +56,11 @@ const HomeMenu = () => {
                     menuImages.map((item) => (
 
                         <MenuItem
-                            key={item.id}
+                            itemName={""} Description={""} categoryId={""} key={item.id}
                             basePrice={""}
                             sizes={[]}
                             extraIngredientPrices={[]}
-                            {...item}
-                        />
+                            {...item} />
 
                     ))}
             </div>

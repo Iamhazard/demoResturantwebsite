@@ -30,7 +30,7 @@ export const fetchSessionToken = createAsyncThunk(
 );
 
 const initialState: CategoryPageProps = {
-  category: [],
+  category: null,
   status: 'idle',
   error: null,
   success: null,
@@ -104,7 +104,9 @@ export const menuItemsByid = createAsyncThunk < [] ,string ,{state:RootState}>(
       const response = await axios.get(`${BACKEND_URL}/menu-items/${id}`,{
         headers: {
           Authorization: `Bearer ${sessionToken}`,
+          
         },
+        
       });
       const menus = response.data;
       console.log("categoreies",menus)

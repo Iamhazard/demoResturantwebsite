@@ -1,7 +1,10 @@
 import Menuitems, { Size } from "@/components/layout/MenuitemsForm";
-import { Role, User} from "@prisma/client";
+import {  User} from "@prisma/client";
 
-
+export type Role ={
+    ADMIN:string,
+    USER:string
+}
 
 export type SideNavItem={
     title:string,
